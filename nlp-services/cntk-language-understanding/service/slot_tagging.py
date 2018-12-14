@@ -157,19 +157,19 @@ class SlotTagging:
             os.makedirs(data_folder)
 
         user_data = {
-            'train': ['train.ctf', self.train_ctf_url],
-            'test': ['test.ctf', self.test_ctf_url],
-            'query': ['query.wl', self.query_wl_url],
-            'slots': ['slots.wl', self.slots_wl_url],
-            'intent': ['intent.wl', self.intent_wl_url]
+            'train': ['./data/train.ctf', self.train_ctf_url],
+            'test': ['./data/test.ctf', self.test_ctf_url],
+            'query': ['./data/query.wl', self.query_wl_url],
+            'slots': ['./data/slots.wl', self.slots_wl_url],
+            'intent': ['./data/intent.wl', self.intent_wl_url]
         }
 
         for data_set, data_source in user_data.items():
-            if not os.path.exists("{}/{}".format(data_folder, data_source[0])):
+            if not os.path.exists(data_source[0]):
                 log.info("{}: Downloading...".format(data_source[1]))
-                self.download(data_source[1], "{}/{}".format(data_folder, data_source[0]))
+                self.download(data_source[1], data_source[0])
             else:
-                log.info("{}: Reusing...".format(data_folder, data_source[0]))
+                log.info("{}: Reusing...".format(data_source[0]))
 
         # number of words in vocab, slot labels, and intent labels
         vocab_size = 943
