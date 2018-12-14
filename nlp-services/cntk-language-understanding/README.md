@@ -82,7 +82,7 @@ $ sh buildproto.sh
 ```
 Start the service and `SNET Daemon`:
 ```
-$ python3 run_language_understanding_service.py
+$ python3 run_slot_tagging_service.py
 ```
 
 ### Calling the service:
@@ -93,7 +93,7 @@ Inputs:
 Local (testing purpose):
 
 ```
-$ python3 test_language_understanding_service.py
+$ python3 test_slot_tagging_service.py
 [[SERVICE_TEST_SCRIPT_CONSOLE_INPUTS]]
 
 [[SERVICE_TEST_SCRIPT_CONSOLE_OUTPUTS]]
