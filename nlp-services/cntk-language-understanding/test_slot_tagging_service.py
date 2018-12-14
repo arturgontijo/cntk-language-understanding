@@ -28,27 +28,27 @@ if __name__ == "__main__":
         if grpc_method == "":
             grpc_method = default
 
-        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/0/atis.train.ctf?raw=true"
+        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.train.ctf?raw=true"
         train_ctf_url = input("train_ctf_url (ATIS Link): ") if not test_flag else default
         if train_ctf_url == "":
             train_ctf_url = default
 
-        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/0/atis.test.ctf?raw=true"
+        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.test.ctf?raw=true"
         test_ctf_url = input("test_ctf_url (ATIS Link): ") if not test_flag else default
         if test_ctf_url == "":
             test_ctf_url = default
 
-        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/1/query.wl?raw=true"
+        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/query.wl?raw=true"
         query_wl_url = input("query_wl_url (ATIS Link): ") if not test_flag else default
         if query_wl_url == "":
             query_wl_url = default
 
-        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/1/slots.wl?raw=true"
+        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/slots.wl?raw=true"
         slots_wl_url = input("slots_wl_url (ATIS Link): ") if not test_flag else default
         if slots_wl_url == "":
             slots_wl_url = default
 
-        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/1/intent.wl?raw=true"
+        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/intent.wl?raw=true"
         intent_wl_url = input("intent_wl_url (ATIS Link): ") if not test_flag else default
         if intent_wl_url == "":
             intent_wl_url = default
