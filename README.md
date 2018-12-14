@@ -7,7 +7,7 @@
 
 # NLP Services
 
-This is the main introduction.
+[[REPOSITORY_INTRO]]
 
 [HTML User's Guide Hub](https://singnet.github.io/nlp-services/)
 
@@ -15,9 +15,9 @@ This is the main introduction.
 
 For more details on how to publish and test a service, select it from the list below:
 
-### cntk-language-understanding:
-- [cntk-language-understanding](cntk-language-understanding/cntk-language-understanding) 
-([User's Guide](docs/users_guide/cntk-language-understanding/cntk-language-understanding.md)) - [[SERVICE_DESCRIPTION]]
+### nlp-services:
+- [cntk-language-understanding](nlp-services/cntk-language-understanding) 
+([User's Guide](docs/users_guide/nlp-services/cntk-language-understanding.md)) - [[SERVICE_DESCRIPTION]]
 [[Reference](https://cntk.ai/pythondocs/CNTK_202_Language_Understanding.html)].
 
 ## Contributing and Reporting Issues

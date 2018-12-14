@@ -5,14 +5,14 @@ import grpc
 import concurrent.futures as futures
 
 import service.common
-from service.cntk-language-understanding import MyServiceClass
+from service.language_understanding import MyServiceClass
 
 # Importing the generated codes from buildproto.sh
-import service.service_spec.cntk-language-understanding_pb2_grpc as grpc_bt_grpc
-from service.service_spec.cntk-language-understanding_pb2 import Output
+import service.service_spec.language_understanding_pb2_grpc as grpc_bt_grpc
+from service.service_spec.language_understanding_pb2 import Output
 
 logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
-log = logging.getLogger("cntk-language-understanding_service")
+log = logging.getLogger("language_understanding_service")
 
 
 # Create a class to be added to the gRPC server

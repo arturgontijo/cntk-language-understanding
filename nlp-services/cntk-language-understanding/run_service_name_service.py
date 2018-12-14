@@ -7,7 +7,7 @@ import argparse
 from service import registry
 
 logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
-log = logging.getLogger("run_cntk-language-understanding_service")
+log = logging.getLogger("run_language_understanding_service")
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
     root_path = pathlib.Path(__file__).absolute().parent
 
     # All services modules go here
-    service_modules = ["service.cntk-language-understanding_service"]
+    service_modules = ["service.language_understanding_service"]
 
     # Call for all the services listed in service_modules
     all_p = start_all_services(root_path, service_modules, args.run_daemon)

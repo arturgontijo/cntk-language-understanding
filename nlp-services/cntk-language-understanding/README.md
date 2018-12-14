@@ -22,7 +22,7 @@ Clone this repository:
 
 ```
 $ git clone https://github.com/singnet/nlp-services.git
-$ cd cntk-language-understanding/cntk-language-understanding
+$ cd nlp-services/cntk-language-understanding
 ```
 
 ### Running the service:
@@ -101,7 +101,7 @@ $ python3 test_language_understanding_service.py
 
   [[SERVICE_OUTPUT_DESCRIPTION_LIST]]
 
-For further instructions about the output of this service, check the [User's Guide](../../docs/users_guide/cntk-language-understanding/cntk-language-understanding.md).
+For further instructions about the output of this service, check the [User's Guide](../../docs/users_guide/nlp-services/cntk-language-understanding.md).
 
 Through SingularityNET (follow this [link](https://github.com/singnet/wiki/blob/master/tutorials/howToPublishService/README.md) 
 to learn how to publish a service and open a payment channel to be able to call it):

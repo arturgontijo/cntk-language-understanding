@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 
 ENV SINGNET_REPOS=/opt/singnet
 ENV GH_REPO_NAME=nlp-services
-ENV SERVICE_FOLDER=${SINGNET_REPOS}/${GH_REPO_NAME}/cntk-language-understanding
+ENV SERVICES_FOLDER=${SINGNET_REPOS}/${GH_REPO_NAME}/nlp-services
 ENV SERVICE_NAME=cntk-language-understanding
 ENV SNETD_PORT=7075
 ENV SNETD_CONFIG=snetd.config.json
@@ -36,7 +36,7 @@ RUN cd ${SINGNET_REPOS} && \
 RUN cd ${SINGNET_REPOS} && \
     git clone https://github.com/singnet/nlp-services.git
 
-RUN cd ${SERVICE_FOLDER}/${SERVICE_NAME} && \
+RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
     sh -c "echo '{ \"DAEMON_END_POINT\": \"http://54.203.198.53:${SNETD_PORT}\", \
                    \"ETHEREUM_JSON_RPC_ENDPOINT\": \"https://kovan.infura.io\", \
                    \"IPFS_END_POINT\": \"http://ipfs.singularitynet.io:80\", \
@@ -53,8 +53,8 @@ RUN cd ${SERVICE_FOLDER}/${SERVICE_NAME} && \
                    } \
                 }'" > ${SNETD_CONFIG}
 
-RUN cd ${SERVICE_FOLDER}/${SERVICE_NAME} && \
+RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
     pip3 install -r requirements.txt && \
     sh buildproto.sh
 
-WORKDIR ${SERVICE_FOLDER}/${SERVICE_NAME}
+WORKDIR ${SERVICES_FOLDER}/${SERVICE_NAME}

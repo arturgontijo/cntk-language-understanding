@@ -2,7 +2,7 @@
 import logging
 
 logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
-log = logging.getLogger("cntk-language-understanding")
+log = logging.getLogger("language_understanding")
 
 
 class MyServiceClass:
