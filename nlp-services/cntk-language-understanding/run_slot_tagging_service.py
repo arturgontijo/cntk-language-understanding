@@ -7,7 +7,7 @@ import argparse
 from service import registry
 
 logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
-log = logging.getLogger("run_language_understanding_service")
+log = logging.getLogger("run_slot_tagging_service")
 
 
 def main():

@@ -1,5 +1,5 @@
 registry = {
-    "language_understanding_service": {
+    "slot_tagging_service": {
         "grpc": 7003,
     },
 }

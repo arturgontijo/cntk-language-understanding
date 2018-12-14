@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+message Input {
+    string train_ctf_url = 1;
+    string test_ctf_url = 2;
+    string query_wl_url = 3;
+    string slots_wl_url = 4;
+    string intent_wl_url = 5;
+}
+
+message Output {
+    string output = 1;
+}
+
+service SlotTagging {
+    rpc slot_tagging(Input) returns (Output) {}
+}
