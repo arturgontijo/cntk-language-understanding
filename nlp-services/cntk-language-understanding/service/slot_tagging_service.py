@@ -24,6 +24,7 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
         self.query_wl_url = ""
         self.slots_wl_url = ""
         self.intent_wl_url = ""
+        self.sentences = ""
 
         self.response = None
 
@@ -42,6 +43,8 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
             self.slots_wl_url = request.slots_wl_url
             self.intent_wl_url = request.intent_wl_url
 
+            self.sentences = request.sentence
+
             # To respond we need to create a Output() object (from .proto file)
             self.response = Output()
 
@@ -50,13 +53,14 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
                 self.test_ctf_url,
                 self.query_wl_url,
                 self.slots_wl_url,
-                self.intent_wl_url
+                self.intent_wl_url,
+                self.sentences
             )
 
             tmp_response = mst.slot_tagging()
-            self.response.output = tmp_response["output"].encode("utf-8")
+            self.response.output = str(tmp_response["output"]).encode("utf-8")
 
-            log.debug("slot_tagging({})={}".format(self.train_ctf_url, self.response.output))
+            log.debug("slot_tagging({})={}".format(self.sentences, self.response.output))
             return self.response
 
         except Exception as e:

@@ -15,12 +15,14 @@ log = logging.getLogger("slot_tagging")
 
 class SlotTagging:
 
-    def __init__(self, train_ctf_url, test_ctf_url, query_wl_url, slots_wl_url, intent_wl_url):
+    def __init__(self, train_ctf_url, test_ctf_url, query_wl_url, slots_wl_url, intent_wl_url, sentences):
         self.train_ctf_url = train_ctf_url
         self.test_ctf_url = test_ctf_url
         self.query_wl_url = query_wl_url
         self.slots_wl_url = slots_wl_url
         self.intent_wl_url = intent_wl_url
+        self.sentences = sentences
+
         self.response = dict()
 
     @staticmethod
@@ -35,17 +37,17 @@ class SlotTagging:
     def create_model(emb_dim, hidden_dim, num_labels):
         with C.layers.default_options(initial_state=0.1):
             return C.layers.Sequential([
-                C.layers.Embedding(emb_dim, name='embed'),
+                C.layers.Embedding(emb_dim, name="embed"),
                 C.layers.Recurrence(C.layers.LSTM(hidden_dim), go_backwards=False),
-                C.layers.Dense(num_labels, name='classify')
+                C.layers.Dense(num_labels, name="classify")
             ])
 
     @staticmethod
     def create_reader(in_path, vocab_size, num_intents, num_labels, is_training):
         return C.io.MinibatchSource(C.io.CTFDeserializer(in_path, C.io.StreamDefs(
-            query=C.io.StreamDef(field='S0', shape=vocab_size, is_sparse=True),
-            intent=C.io.StreamDef(field='S1', shape=num_intents, is_sparse=True),
-            slot_labels=C.io.StreamDef(field='S2', shape=num_labels, is_sparse=True)
+            query=C.io.StreamDef(field="S0", shape=vocab_size, is_sparse=True),
+            intent=C.io.StreamDef(field="S1", shape=num_intents, is_sparse=True),
+            slot_labels=C.io.StreamDef(field="S2", shape=num_labels, is_sparse=True)
         )), randomize=is_training, max_sweeps=C.io.INFINITELY_REPEAT if is_training else 1)
 
     @staticmethod
@@ -54,7 +56,7 @@ class SlotTagging:
         errs = C.classification_error(model, labels)
         return ce, errs  # (model, labels) -> (loss, error metric)
 
-    def train(self, x, y, reader, model_func, max_epochs=10, task='slot_tagging'):
+    def train(self, x, y, reader, model_func, max_epochs=10, task="slot_tagging"):
         log.info("Training...")
 
         # Instantiate the model function; x is the input (feature) variable
@@ -88,7 +90,7 @@ class SlotTagging:
             gradient_clipping_with_truncation=True)
 
         # Setup the progress updater
-        progress_printer = C.logging.ProgressPrinter(tag='Training', num_epochs=max_epochs)
+        progress_printer = C.logging.ProgressPrinter(tag="Training", num_epochs=max_epochs)
 
         # Instantiate the trainer
         trainer = C.Trainer(model, (loss, label_error), learner, progress_printer)
@@ -97,7 +99,7 @@ class SlotTagging:
         C.logging.log_number_of_parameters(model)
 
         # Assign the data fields to be read from the input
-        if task == 'slot_tagging':
+        if task == "slot_tagging":
             data_map = {x: reader.streams.query, y: reader.streams.slot_labels}
         else:
             data_map = {x: reader.streams.query, y: reader.streams.intent}
@@ -113,7 +115,7 @@ class SlotTagging:
 
         return model
 
-    def evaluate(self, x, y, reader, model_func, task='slot_tagging'):
+    def evaluate(self, x, y, reader, model_func, task="slot_tagging"):
         log.info("Evaluating...")
 
         # Instantiate the model function; x is the input (feature) variable
@@ -123,10 +125,10 @@ class SlotTagging:
         loss, label_error = self.create_criterion_function_preferred(model, y)
 
         # process mini batches and perform evaluation
-        progress_printer = C.logging.ProgressPrinter(tag='Evaluation', num_epochs=0)
+        progress_printer = C.logging.ProgressPrinter(tag="Evaluation", num_epochs=0)
 
         # Assign the data fields to be read from the input
-        if task == 'slot_tagging':
+        if task == "slot_tagging":
             data_map = {x: reader.streams.query, y: reader.streams.slot_labels}
         else:
             data_map = {x: reader.streams.query, y: reader.streams.intent}
@@ -149,25 +151,26 @@ class SlotTagging:
     def slot_tagging(self):
 
         self.response = {
-            "output": "Fail"
+            "output": []
         }
 
-        data_folder = './data'
+        data_folder = "./data"
         if not os.path.exists(data_folder):
             os.makedirs(data_folder)
 
         user_data = {
-            'train': ['./data/train.ctf', self.train_ctf_url],
-            'test': ['./data/test.ctf', self.test_ctf_url],
-            'query': ['./data/query.wl', self.query_wl_url],
-            'slots': ['./data/slots.wl', self.slots_wl_url],
-            'intent': ['./data/intent.wl', self.intent_wl_url]
+            "train": ["./data/train.ctf", self.train_ctf_url],
+            "test": ["./data/test.ctf", self.test_ctf_url],
+            "query": ["./data/query.wl", self.query_wl_url],
+            "slots": ["./data/slots.wl", self.slots_wl_url],
+            "intent": ["./data/intent.wl", self.intent_wl_url]
         }
 
         for data_set, data_source in user_data.items():
             if not os.path.exists(data_source[0]):
-                log.info("{}: Downloading...".format(data_source[1]))
-                self.download(data_source[1], data_source[0])
+                if data_source[1] != "":
+                    log.info("{}: Downloading...".format(data_source[1]))
+                    self.download(data_source[1], data_source[0])
             else:
                 log.info("{}: Reusing...".format(data_source[0]))
 
@@ -188,34 +191,42 @@ class SlotTagging:
 
         z = self.create_model(emb_dim, hidden_dim, num_labels)
 
-        # peek
-        reader = self.create_reader(user_data['train'][0], vocab_size, num_intents, num_labels, is_training=True)
+        # Training the model
+        reader = self.create_reader(user_data["train"][0], vocab_size, num_intents, num_labels, is_training=True)
         z = self.train(x_input, y_input, reader, z)
 
-        reader = self.create_reader(user_data['test'][0], vocab_size, num_intents, num_labels, is_training=False)
-        self.evaluate(x_input, y_input, reader, z)
+        # Testing the model
+        if os.path.exists(user_data["test"][0]):
+            reader = self.create_reader(user_data["test"][0], vocab_size, num_intents, num_labels, is_training=False)
+            self.evaluate(x_input, y_input, reader, z)
 
         # load dictionaries
-        query_wl = [line.rstrip('\n') for line in open(user_data['query'][0])]
-        slots_wl = [line.rstrip('\n') for line in open(user_data['slots'][0])]
+        query_wl = [line.rstrip("\n") for line in open(user_data["query"][0])]
+        slots_wl = [line.rstrip("\n") for line in open(user_data["slots"][0])]
         query_dict = {query_wl[i]: i for i in range(len(query_wl))}
         slots_dict = {slots_wl[i]: i for i in range(len(slots_wl))}
 
-        # let's run a sequence through
-        seq = 'BOS flights from new york to seattle by delta airlines EOS'
-        w = [query_dict[w] for w in seq.split()]
-        print(w)
-        onehot = np.zeros([len(w), len(query_dict)], np.float32)
-        for t in range(len(w)):
-            onehot[t, w[t]] = 1
+        # let"s run a sequence through
+        for sent in self.sentences:
+            if not ("BOS" and "EOS") in sent:
+                seq = "BOS {} EOS".format(sent)
+            else:
+                seq = sent
 
-        # x = C.sequence.input_variable(vocab_size)
-        pred = z(x_input).eval({x_input: [onehot]})[0]
-        log.info(pred.shape)
-        best = np.argmax(pred, axis=1)
-        log.info(best)
+            w = [query_dict[w] for w in seq.split()]
+            print(w)
+            one_hot = np.zeros([len(w), len(query_dict)], np.float32)
+            for t in range(len(w)):
+                one_hot[t, w[t]] = 1
 
-        self.response["output"] = str(list(zip(seq.split(), [slots_wl[s] for s in best])))
-        log.info(self.response)
+            # x = C.sequence.input_variable(vocab_size)
+            pred = z(x_input).eval({x_input: [one_hot]})[0]
+            log.info(pred.shape)
+            best = np.argmax(pred, axis=1)
+            log.info(best)
+
+            output = str(list(zip(seq.split(), [slots_wl[s] for s in best])))
+            self.response["output"].append(output)
+            log.info(output)
 
         return self.response
