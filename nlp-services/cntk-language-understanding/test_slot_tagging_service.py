@@ -28,6 +28,11 @@ if __name__ == "__main__":
         if grpc_method == "":
             grpc_method = default
 
+        default = "BOS flights from new york to seattle by delta airlines EOS"
+        sentences = input("sentences (# separated): ") if not test_flag else default
+        if sentences == "":
+            sentences = default
+
         default = "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.train.ctf?raw=true"
         train_ctf_url = input("train_ctf_url (ATIS Link): ") if not test_flag else default
         if train_ctf_url == "":
@@ -62,6 +67,7 @@ if __name__ == "__main__":
                 query_wl_url=query_wl_url,
                 slots_wl_url=slots_wl_url,
                 intent_wl_url=intent_wl_url,
+                sentences=sentences
             )
 
             response = stub.slot_tagging(request)

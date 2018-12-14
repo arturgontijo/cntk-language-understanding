@@ -207,7 +207,8 @@ class SlotTagging:
         slots_dict = {slots_wl[i]: i for i in range(len(slots_wl))}
 
         # let"s run a sequence through
-        for sent in self.sentences:
+        sentences = self.sentences.split("#")
+        for sent in sentences:
             if not ("BOS" and "EOS") in sent:
                 seq = "BOS {} EOS".format(sent)
             else:
