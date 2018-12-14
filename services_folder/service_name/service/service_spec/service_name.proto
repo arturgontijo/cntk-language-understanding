@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message Input {
+    string input_1 = 1;
+}
+
+message Output {
+    string output_1 = 1;
+}
+
+service MyService {
+    rpc my_method(Input) returns (Output) {}
+}
