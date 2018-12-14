@@ -43,7 +43,7 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
             self.slots_wl_url = request.slots_wl_url
             self.intent_wl_url = request.intent_wl_url
 
-            self.sentences = request.sentence
+            self.sentences = request.sentences
 
             # To respond we need to create a Output() object (from .proto file)
             self.response = Output()
