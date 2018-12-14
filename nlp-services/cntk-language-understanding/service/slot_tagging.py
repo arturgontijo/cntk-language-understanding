@@ -88,7 +88,7 @@ class SlotTagging:
             gradient_clipping_with_truncation=True)
 
         # Setup the progress updater
-        progress_printer = C.logging.ProgressPrinter(freq=100, first=10, tag='Training', num_epochs=max_epochs)
+        progress_printer = C.logging.ProgressPrinter(tag='Training', num_epochs=max_epochs)
 
         # Instantiate the trainer
         trainer = C.Trainer(model, (loss, label_error), learner, progress_printer)
@@ -215,7 +215,7 @@ class SlotTagging:
         best = np.argmax(pred, axis=1)
         log.info(best)
 
-        self.response = str(list(zip(seq.split(), [slots_wl[s] for s in best])))
+        self.response["output"] = str(list(zip(seq.split(), [slots_wl[s] for s in best])))
         log.info(self.response)
 
         return self.response
