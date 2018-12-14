@@ -23,29 +23,35 @@ if __name__ == "__main__":
         # Open a gRPC channel
         channel = grpc.insecure_channel("{}".format(endpoint))
 
+        default = "slot_tagging"
         grpc_method = input("Method (slot_tagging): ") if not test_flag else "slot_tagging"
         if grpc_method == "":
-            grpc_method = "slot_tagging"
+            grpc_method = default
 
-        train_ctf_url = input("train_ctf_url (ATIS Link): ") if not test_flag else "https://github.com/Microsoft/CNTK/blob/release/2.6/0/atis.train.ctf?raw=true"
+        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/0/atis.train.ctf?raw=true"
+        train_ctf_url = input("train_ctf_url (ATIS Link): ") if not test_flag else default
         if train_ctf_url == "":
-            train_ctf_url = "my_input"
+            train_ctf_url = default
 
-        test_ctf_url = input("test_ctf_url (ATIS Link): ") if not test_flag else "https://github.com/Microsoft/CNTK/blob/release/2.6/0/atis.test.ctf?raw=true"
+        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/0/atis.test.ctf?raw=true"
+        test_ctf_url = input("test_ctf_url (ATIS Link): ") if not test_flag else default
         if test_ctf_url == "":
-            test_ctf_url = "my_input"
+            test_ctf_url = default
 
-        query_wl_url = input("query_wl_url (ATIS Link): ") if not test_flag else "https://github.com/Microsoft/CNTK/blob/release/2.6/1/query.wl?raw=true"
+        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/1/query.wl?raw=true"
+        query_wl_url = input("query_wl_url (ATIS Link): ") if not test_flag else default
         if query_wl_url == "":
-            query_wl_url = "my_input"
+            query_wl_url = default
 
-        slots_wl_url = input("slots_wl_url (ATIS Link): ") if not test_flag else "https://github.com/Microsoft/CNTK/blob/release/2.6/1/slots.wl?raw=true"
+        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/1/slots.wl?raw=true"
+        slots_wl_url = input("slots_wl_url (ATIS Link): ") if not test_flag else default
         if slots_wl_url == "":
-            slots_wl_url = "my_input"
+            slots_wl_url = default
 
-        intent_wl_url = input("intent_wl_url (ATIS Link): ") if not test_flag else "https://github.com/Microsoft/CNTK/blob/release/2.6/1/intent.wl?raw=true"
+        default = "https://github.com/Microsoft/CNTK/blob/release/2.6/1/intent.wl?raw=true"
+        intent_wl_url = input("intent_wl_url (ATIS Link): ") if not test_flag else default
         if intent_wl_url == "":
-            intent_wl_url = "my_input"
+            intent_wl_url = default
 
         if grpc_method == "slot_tagging":
             stub = grpc_bt_grpc.SlotTaggingStub(channel)
