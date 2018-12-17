@@ -169,6 +169,7 @@ class SlotTagging:
     def slot_tagging(self):
 
         self.response = {
+            "model_url": "Fail",
             "output_url": "Fail"
         }
 
@@ -261,15 +262,20 @@ class SlotTagging:
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
 
+        # Saving the trained model
+        model_file = "{}.model".format(uid)
+        z.save("{}/{}".format(output_folder, model_file))
+
         log.info("Output: {}".format(output))
         output_file = "{}.txt".format(uid)
         with open("{}/{}".format(output_folder, output_file), "w+") as f:
             for idx, line in enumerate(sentences):
                 f.write("{}: {}\n{}: {}\n".format(idx, line, idx, output[idx]))
-                
+
         # Removing old files (> 24h)
         self.delete_old_files(data_folder)
         self.delete_old_files(output_folder)
 
+        self.response["model_url"] = "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/{}".format(model_file)
         self.response["output_url"] = "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/{}".format(output_file)
         return self.response

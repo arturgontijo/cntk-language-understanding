@@ -10,7 +10,8 @@ message Input {
 }
 
 message Output {
-    string output_url = 1;
+    string model_url = 1;
+    string output_url = 2;
 }
 
 service SlotTagging {
