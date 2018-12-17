@@ -1,4 +1,5 @@
 import sys
+import time
 import logging
 import traceback
 
@@ -14,6 +15,10 @@ from service.service_spec.slot_tagging_pb2 import Output
 
 logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
 log = logging.getLogger("slot_tagging_service")
+
+GPU_DEVICE_BUSY = False
+GPU_QUEUE = []
+GPU_QUEUE_ID = -1
 
 
 # Create a class to be added to the gRPC server
@@ -36,8 +41,26 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
     # context: object that provides RPC-specific information (timeout, etc).
     def slot_tagging(self, request, context):
 
+        gpu_queue_id = get_gpu_queue_id()
         try:
-            # In our case, request is a Input() object (from .proto file)
+            # Wait to use GPU (max: 1h)
+            count = 0
+            while GPU_DEVICE_BUSY or GPU_QUEUE[0] != gpu_queue_id:
+                time.sleep(1)
+                if count % 60 == 0:
+                    log.debug("[Client: {}] GPU is being used by [{}], waiting...".format(gpu_queue_id, GPU_QUEUE[0]))
+                count += 1
+                if count > 60 * 60:
+                    self.response = Output()
+                    self.response.last_sax_word = "GPU Busy"
+                    self.response.forecast_sax_letter = "GPU Busy"
+                    self.response.position_in_sax_interval = -1
+                    return self.response
+
+            # Lock GPU usage
+            acquire_gpu(gpu_queue_id)
+
+            # In our case, request is an Input() object (from .proto file)
             self.train_ctf_url = request.train_ctf_url
             self.test_ctf_url = request.test_ctf_url
             self.query_wl_url = request.query_wl_url
@@ -62,14 +85,51 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
             self.response.output_url = str(tmp_response["output_url"]).encode("utf-8")
 
             log.debug("slot_tagging({})={}".format(self.sentences_url, self.response.output_url))
+
+            # Unlock GPU usage
+            release_gpu(gpu_queue_id)
+
             return self.response
 
         except Exception as e:
+            if gpu_queue_id == GPU_QUEUE[0]:
+                release_gpu(gpu_queue_id)
+            else:
+                remove_from_queue(gpu_queue_id)
             traceback.print_exc()
             log.error(e)
             self.response = Output()
             self.response.output_url = "Fail"
             return self.response
+
+
+def get_gpu_queue_id():
+    global GPU_QUEUE
+    global GPU_QUEUE_ID
+    GPU_QUEUE_ID += 1
+    GPU_QUEUE.append(GPU_QUEUE_ID)
+    log.debug("[Client: {}]                  GPU_QUEUE     : {}".format(GPU_QUEUE_ID, GPU_QUEUE))
+    return GPU_QUEUE_ID
+
+
+def remove_from_queue(gpu_queue_id):
+    global GPU_QUEUE
+    GPU_QUEUE.remove(gpu_queue_id)
+
+
+def acquire_gpu(gpu_queue_id):
+    global GPU_DEVICE_BUSY
+    global GPU_QUEUE
+    GPU_DEVICE_BUSY = True
+    log.debug("[Client: {}] Acquiring GPU (GPU_DEVICE_BUSY): {}".format(gpu_queue_id, GPU_DEVICE_BUSY))
+
+
+def release_gpu(gpu_queue_id):
+    global GPU_DEVICE_BUSY
+    remove_from_queue(gpu_queue_id)
+    GPU_DEVICE_BUSY = False
+    log.debug("[Client: {}] Releasing GPU (GPU_DEVICE_BUSY): {}".format(gpu_queue_id, GPU_DEVICE_BUSY))
+    log.debug("[Client: {}]                  GPU_QUEUE     : {}".format(gpu_queue_id, GPU_QUEUE))
 
 
 # The gRPC serve function.
