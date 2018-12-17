@@ -243,7 +243,7 @@ class SlotTagging:
         # Get only the first and the last 10 hex
         uid = m[:10] + m[-10:]
 
-        output_folder = "./opt/singnet/output"
+        output_folder = "/opt/singnet/output"
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
 
