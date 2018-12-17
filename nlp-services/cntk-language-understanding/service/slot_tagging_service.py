@@ -45,9 +45,6 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
 
             self.sentences_url = request.sentences_url
 
-            # To respond we need to create a Output() object (from .proto file)
-            self.response = Output()
-
             mst = SlotTagging(
                 self.train_ctf_url,
                 self.test_ctf_url,
@@ -58,6 +55,9 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
             )
 
             tmp_response = mst.slot_tagging()
+
+            # To respond we need to create a Output() object (from .proto file)
+            self.response = Output()
             self.response.output_url = str(tmp_response["output_url"]).encode("utf-8")
 
             log.debug("slot_tagging({})={}".format(self.sentences_url, self.response.output_url))
@@ -66,7 +66,7 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
         except Exception as e:
             log.error(e)
             self.response = Output()
-            self.response.output = "Fail"
+            self.response.output_url = "Fail"
             return self.response
 
 

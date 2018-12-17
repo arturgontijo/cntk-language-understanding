@@ -154,7 +154,7 @@ class SlotTagging:
     def slot_tagging(self):
 
         self.response = {
-            "output": []
+            "output_url": "Fail"
         }
 
         data_folder = "./data"
@@ -208,7 +208,8 @@ class SlotTagging:
         # slots_dict = {slots_wl[i]: i for i in range(len(slots_wl))}
 
         # let"s run a sequence through
-        sentences = self.sentences_url.split("#")
+        sentences_file = self.download(self.sentences_url, save=False)
+        sentences = sentences_file.split("\n")
         output = []
         for sent in sentences:
             if not ("BOS" and "EOS") in sent:
@@ -227,8 +228,6 @@ class SlotTagging:
             output.append = str(list(zip(seq.split(), [slots_wl[s] for s in best])))
 
         log.info(output)
-        sentences_file = self.download(self.sentences_url, save=False)
-        sentences_file = sentences_file.split("\n")
         output_file = "{}_out.txt".format(sentences_file.split(".")[0])
         with open(output_file, "w+") as f:
             for idx, line in enumerate(sentences_file):
