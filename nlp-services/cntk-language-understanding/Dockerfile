@@ -7,7 +7,7 @@ ENV SERVICE_NAME=cntk-language-understanding
 ENV SNETD_PORT=7075
 ENV SNETD_CONFIG=snetd.config.json
 
-RUN mkdir -p ${SINGNET_REPOS}
+RUN mkdir -p ${SERVICES_FOLDER}
 
 RUN apt-get update && \
     apt-get install -y apt-utils
