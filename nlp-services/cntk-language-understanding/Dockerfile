@@ -1,8 +1,8 @@
 FROM microsoft/cntk:latest
 
 ENV SINGNET_REPOS=/opt/singnet
-ENV GH_REPO_NAME=nlp-services
-ENV SERVICES_FOLDER=${SINGNET_REPOS}/${GH_REPO_NAME}
+ENV GITHUB_REPO_NAME=nlp-services
+ENV SERVICES_FOLDER=${SINGNET_REPOS}/${GITHUB_REPO_NAME}
 ENV SERVICE_NAME=cntk-language-understanding
 ENV SNETD_PORT=7075
 ENV SNETD_CONFIG=snetd.config.json
@@ -27,7 +27,7 @@ RUN cd ${SINGNET_REPOS} && \
 #RUN cd ${SINGNET_REPOS} && \
 #    git clone https://github.com/singnet/${GH_REPO_NAME}.git
 
-RUN cd ${SERVICES_FOLDER} && \
+RUN cd ${SINGNET_REPOS} && \
     git clone https://github.com/arturgontijo/cntk-language-understanding.git
 
 RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
