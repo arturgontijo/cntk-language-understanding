@@ -1,1 +1,4 @@
-[[SERVICE_PYTHON_REQUIREMENTS]]
+grpcio>=1.14.2
+grpcio-tools>=1.14.1
+requests==2.20.0
+cntk==2.5

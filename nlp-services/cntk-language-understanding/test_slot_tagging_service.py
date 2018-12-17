@@ -28,8 +28,8 @@ if __name__ == "__main__":
         if grpc_method == "":
             grpc_method = default
 
-        default = "BOS flights from new york to seattle by delta airlines EOS"
-        sentences = input("sentences (# separated): ") if not test_flag else default
+        default = "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Example/sentences.txt"
+        sentences = input("sentences (link, one per line): ") if not test_flag else default
         if sentences == "":
             sentences = default
 

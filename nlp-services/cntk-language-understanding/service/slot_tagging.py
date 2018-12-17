@@ -15,23 +15,26 @@ log = logging.getLogger("slot_tagging")
 
 class SlotTagging:
 
-    def __init__(self, train_ctf_url, test_ctf_url, query_wl_url, slots_wl_url, intent_wl_url, sentences):
+    def __init__(self, train_ctf_url, test_ctf_url, query_wl_url, slots_wl_url, intent_wl_url, sentences_url):
         self.train_ctf_url = train_ctf_url
         self.test_ctf_url = test_ctf_url
         self.query_wl_url = query_wl_url
         self.slots_wl_url = slots_wl_url
         self.intent_wl_url = intent_wl_url
-        self.sentences = sentences
+        self.sentences_url = sentences_url
 
         self.response = dict()
 
     @staticmethod
-    def download(url, filename):
+    def download(url, filename=None, save=True):
         """ utility function to download a file """
         response = requests.get(url, stream=True)
-        with open(filename, "wb") as handle:
-            for data in response.iter_content():
-                handle.write(data)
+        if save:
+            with open(filename, "wb") as handle:
+                for data in response.iter_content():
+                    handle.write(data)
+        else:
+            return response.content
 
     @staticmethod
     def create_model(emb_dim, hidden_dim, num_labels):
@@ -180,8 +183,6 @@ class SlotTagging:
         num_intents = 26
 
         # model dimensions
-        input_dim = vocab_size
-        label_dim = num_labels
         emb_dim = 150
         hidden_dim = 300
 
@@ -204,10 +205,11 @@ class SlotTagging:
         query_wl = [line.rstrip("\n") for line in open(user_data["query"][0])]
         slots_wl = [line.rstrip("\n") for line in open(user_data["slots"][0])]
         query_dict = {query_wl[i]: i for i in range(len(query_wl))}
-        slots_dict = {slots_wl[i]: i for i in range(len(slots_wl))}
+        # slots_dict = {slots_wl[i]: i for i in range(len(slots_wl))}
 
         # let"s run a sequence through
-        sentences = self.sentences.split("#")
+        sentences = self.sentences_url.split("#")
+        output = []
         for sent in sentences:
             if not ("BOS" and "EOS") in sent:
                 seq = "BOS {} EOS".format(sent)
@@ -215,19 +217,22 @@ class SlotTagging:
                 seq = sent
 
             w = [query_dict[w] for w in seq.split()]
-            print(w)
             one_hot = np.zeros([len(w), len(query_dict)], np.float32)
             for t in range(len(w)):
                 one_hot[t, w[t]] = 1
 
             # x = C.sequence.input_variable(vocab_size)
             pred = z(x_input).eval({x_input: [one_hot]})[0]
-            log.info(pred.shape)
             best = np.argmax(pred, axis=1)
-            log.info(best)
+            output.append = str(list(zip(seq.split(), [slots_wl[s] for s in best])))
 
-            output = str(list(zip(seq.split(), [slots_wl[s] for s in best])))
-            self.response["output"].append(output)
-            log.info(output)
+        log.info(output)
+        sentences_file = self.download(self.sentences_url, save=False)
+        sentences_file = sentences_file.split("\n")
+        output_file = "{}_out.txt".format(sentences_file.split(".")[0])
+        with open(output_file, "w+") as f:
+            for idx, line in enumerate(sentences_file):
+                f.write("{}: {}\n{}: {}\n".format(idx, line, idx, output[idx]))
 
+        self.response["output_url"] = "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/{}".format(output_file)
         return self.response

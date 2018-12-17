@@ -6,8 +6,8 @@ jobs:
     working_directory: ~/singnet
     environment:
       SERVICE_NAME: cntk-language-understanding
-      SERVICE_RUN_SCRIPT: run_language_understanding_service.py
-      SERVICE_TEST_SCRIPT: test_language_understanding_service.py
+      SERVICE_RUN_SCRIPT: run_slot_tagging_service.py
+      SERVICE_TEST_SCRIPT: test_slot_tagging_service.py
       SNETD_PORT: 7075
     steps:
       - run:
@@ -21,7 +21,7 @@ jobs:
                 --name $DOCKER_CONTAINER_NAME_CNTK_LU \
                 --restart unless-stopped \
                 -p $SNETD_PORT:$SNETD_PORT \
-                -di $DOCKER_IMAGE_NAME_CNTK_LU sh -c "git pull;python3 $SERVICE_RUN_SCRIPT"
+                -di $DOCKER_IMAGE_NAME_CNTK_LU bash -c "source '/cntk/activate-cntk';git pull;python3 $SERVICE_RUN_SCRIPT"
             EOF
       - run:
           name: Remove Old Docker Container
@@ -33,7 +33,7 @@ jobs:
           name: Test local
           command: |
             ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST << EOF
-              nvidia-docker exec -i $DOCKER_CONTAINER_NAME_CNTK_LU python3 $SERVICE_TEST_SCRIPT auto
+              nvidia-docker exec -i $DOCKER_CONTAINER_NAME_CNTK_LU bash -c "source '/cntk/activate-cntk';python3 $SERVICE_TEST_SCRIPT auto"
             EOF
 workflows:
   version: 2

@@ -6,11 +6,11 @@ message Input {
     string query_wl_url = 3;
     string slots_wl_url = 4;
     string intent_wl_url = 5;
-    string sentences = 6;
+    string sentences_url = 6;
 }
 
 message Output {
-    string output = 1;
+    string output_url = 1;
 }
 
 service SlotTagging {

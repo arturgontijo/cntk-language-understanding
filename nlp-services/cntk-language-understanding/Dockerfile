@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM microsoft/cntk:latest
 
 ENV SINGNET_REPOS=/opt/singnet
 ENV GH_REPO_NAME=nlp-services
@@ -10,21 +10,12 @@ ENV SNETD_CONFIG=snetd.config.json
 RUN mkdir -p ${SINGNET_REPOS}
 
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y apt-utils
+
+RUN apt-get install -y \
     git \
     wget \
-    nano \
-    libudev-dev \
-    libusb-1.0-0-dev
-
-RUN apt-get install -y python3 python3-pip
-RUN apt-get install -y nodejs npm
-
-RUN cd ${SINGNET_REPOS} && \
-    git clone https://github.com/singnet/snet-cli && \
-    cd snet-cli && \
-    ./scripts/blockchain install && \
-    pip3.6 install -e .
+    nano
 
 RUN cd ${SINGNET_REPOS} && \
     mkdir snet-daemon && \
@@ -34,7 +25,7 @@ RUN cd ${SINGNET_REPOS} && \
     mv linux-amd64/snetd /usr/bin/snetd
 
 RUN cd ${SINGNET_REPOS} && \
-    git clone https://github.com/singnet/nlp-services.git
+    git clone https://github.com/singnet/${TS_REPO_NAME}.git
 
 RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
     sh -c "echo '{ \"DAEMON_END_POINT\": \"http://54.203.198.53:${SNETD_PORT}\", \
@@ -54,7 +45,7 @@ RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
                 }'" > ${SNETD_CONFIG}
 
 RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
-    pip3 install -r requirements.txt && \
+    /root/anaconda3/envs/cntk-py35/bin/python -m pip install -r requirements.txt && \
     sh buildproto.sh
 
 WORKDIR ${SERVICES_FOLDER}/${SERVICE_NAME}

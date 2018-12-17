@@ -1,2 +1,2 @@
 #! /bin/bash
-python3.6 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. service/service_spec/slot_tagging.proto
+/root/anaconda3/envs/cntk-py35/bin/python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. service/service_spec/slot_tagging.proto
