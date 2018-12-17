@@ -34,7 +34,7 @@ class SlotTagging:
                 for data in response.iter_content():
                     handle.write(data)
         else:
-            return response.content
+            return response.text
 
     @staticmethod
     def create_model(emb_dim, hidden_dim, num_labels):
