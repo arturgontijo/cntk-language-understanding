@@ -1,10 +1,11 @@
-import requests
 import os
-
+import requests
+import glob
+import datetime
 import hashlib
-import numpy as np
 import logging
 
+import numpy as np
 import cntk as C
 import cntk.tests.test_utils
 cntk.tests.test_utils.set_device_from_pytest_env()  # (only needed for our build system)
@@ -36,6 +37,19 @@ class SlotTagging:
                     handle.write(data)
         else:
             return response.text
+
+    @staticmethod
+    def delete_old_files(folder):
+        try:
+            for file_path in glob.iglob("{}/*".format(folder), recursive=True):
+                file_timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
+                if datetime.datetime.now() - file_timestamp > datetime.timedelta(hours=24):
+                    log.debug("Deleting old file: {}".format(file_path))
+                    os.remove(file_path)
+            return True
+        except Exception as e:
+            log.error(e)
+            return False
 
     @staticmethod
     def create_model(emb_dim, hidden_dim, num_labels):
@@ -158,16 +172,30 @@ class SlotTagging:
             "output_url": "Fail"
         }
 
-        data_folder = "./data"
+        # Setting a hash accordingly to the inputs (URLs)
+        seed = "{}{}{}{}{}{}".format(
+            self.train_ctf_url,
+            self.test_ctf_url,
+            self.query_wl_url,
+            self.slots_wl_url,
+            self.intent_wl_url,
+            self.sentences_url)
+        m = hashlib.sha256()
+        m.update(seed.encode("utf-8"))
+        m = m.digest().hex()
+        # Get only the first and the last 10 hex
+        uid = m[:10] + m[-10:]
+
+        data_folder = "./data/{}".format(uid)
         if not os.path.exists(data_folder):
             os.makedirs(data_folder)
 
         user_data = {
-            "train": ["./data/train.ctf", self.train_ctf_url],
-            "test": ["./data/test.ctf", self.test_ctf_url],
-            "query": ["./data/query.wl", self.query_wl_url],
-            "slots": ["./data/slots.wl", self.slots_wl_url],
-            "intent": ["./data/intent.wl", self.intent_wl_url]
+            "train": ["{}/train.ctf".format(data_folder), self.train_ctf_url],
+            "test": ["{}/test.ctf".format(data_folder), self.test_ctf_url],
+            "query": ["{}/query.wl".format(data_folder), self.query_wl_url],
+            "slots": ["{}/slots.wl".format(data_folder), self.slots_wl_url],
+            "intent": ["{}/intent.wl".format(data_folder), self.intent_wl_url]
         }
 
         for data_set, data_source in user_data.items():
@@ -229,20 +257,6 @@ class SlotTagging:
             best = np.argmax(pred, axis=1)
             output.append(str(list(zip(seq.split(), [slots_wl[s] for s in best]))))
 
-        # Setting a hash accordingly to the inputs (URLs)
-        seed = "{}{}{}{}{}{}".format(
-            self.train_ctf_url,
-            self.test_ctf_url,
-            self.query_wl_url,
-            self.slots_wl_url,
-            self.intent_wl_url,
-            self.sentences_url)
-        m = hashlib.sha256()
-        m.update(seed.encode("utf-8"))
-        m = m.digest().hex()
-        # Get only the first and the last 10 hex
-        uid = m[:10] + m[-10:]
-
         output_folder = "/opt/singnet/output"
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
@@ -252,6 +266,10 @@ class SlotTagging:
         with open("{}/{}".format(output_folder, output_file), "w+") as f:
             for idx, line in enumerate(sentences):
                 f.write("{}: {}\n{}: {}\n".format(idx, line, idx, output[idx]))
+                
+        # Removing old files (> 24h)
+        self.delete_old_files(data_folder)
+        self.delete_old_files(output_folder)
 
         self.response["output_url"] = "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/{}".format(output_file)
         return self.response
