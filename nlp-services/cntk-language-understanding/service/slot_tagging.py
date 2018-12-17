@@ -1,6 +1,7 @@
 import requests
 import os
 
+import hashlib
 import numpy as np
 import logging
 
@@ -228,10 +229,27 @@ class SlotTagging:
             best = np.argmax(pred, axis=1)
             output.append(str(list(zip(seq.split(), [slots_wl[s] for s in best]))))
 
+        # Setting a hash accordingly to the inputs (URLs)
+        seed = "{}{}{}{}{}{}".format(
+            self.train_ctf_url,
+            self.test_ctf_url,
+            self.query_wl_url,
+            self.slots_wl_url,
+            self.intent_wl_url,
+            self.sentences_url)
+        m = hashlib.sha256()
+        m.update(seed.encode("utf-8"))
+        m = m.digest().hex()
+        # Get only the first and the last 10 hex
+        uid = m[:10] + m[-10:]
+
+        output_folder = "./opt/singnet/output"
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
+
         log.info("Output: {}".format(output))
-        output_file = self.sentences_url.split("/")[-1]
-        output_file = "{}_out.txt".format(output_file.split(".")[0])
-        with open(output_file, "w+") as f:
+        output_file = "{}.txt".format(uid)
+        with open("{}/{}".format(output_folder, output_file), "w+") as f:
             for idx, line in enumerate(sentences):
                 f.write("{}: {}\n{}: {}\n".format(idx, line, idx, output[idx]))
 
