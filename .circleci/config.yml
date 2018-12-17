@@ -21,7 +21,7 @@ jobs:
                 --name $DOCKER_CONTAINER_NAME_CNTK_LU \
                 --restart unless-stopped \
                 -p $SNETD_PORT:$SNETD_PORT \
-                -v /home/admin/storage/LanguageUnderstanding/CNTK/Output:/opt/singnet/output
+                -v /home/admin/storage/LanguageUnderstanding/CNTK/Output:/opt/singnet/output \
                 -di $DOCKER_IMAGE_NAME_CNTK_LU bash -c "source '/cntk/activate-cntk';git pull;python3 $SERVICE_RUN_SCRIPT"
             EOF
       - run:
