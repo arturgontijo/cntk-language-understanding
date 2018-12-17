@@ -225,7 +225,7 @@ class SlotTagging:
             # x = C.sequence.input_variable(vocab_size)
             pred = z(x_input).eval({x_input: [one_hot]})[0]
             best = np.argmax(pred, axis=1)
-            output.append = str(list(zip(seq.split(), [slots_wl[s] for s in best])))
+            output.append(str(list(zip(seq.split(), [slots_wl[s] for s in best]))))
 
         log.info(output)
         output_file = "{}_out.txt".format(sentences_file.split(".")[0])
