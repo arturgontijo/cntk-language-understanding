@@ -29,9 +29,9 @@ if __name__ == "__main__":
             grpc_method = default
 
         default = "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Example/sentences.txt"
-        sentences = input("sentences (link, one per line): ") if not test_flag else default
-        if sentences == "":
-            sentences = default
+        sentences_url = input("sentences (URL, one per line): ") if not test_flag else default
+        if sentences_url == "":
+            sentences_url = default
 
         default = "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.train.ctf?raw=true"
         train_ctf_url = input("train_ctf_url (ATIS Link): ") if not test_flag else default
@@ -67,7 +67,7 @@ if __name__ == "__main__":
                 query_wl_url=query_wl_url,
                 slots_wl_url=slots_wl_url,
                 intent_wl_url=intent_wl_url,
-                sentences=sentences
+                sentences_url=sentences_url
             )
 
             response = stub.slot_tagging(request)
