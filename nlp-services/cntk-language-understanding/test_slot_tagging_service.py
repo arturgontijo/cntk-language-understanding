@@ -72,7 +72,10 @@ if __name__ == "__main__":
 
             response = stub.slot_tagging(request)
             print("\nresponse:")
-            print("{}".format(response))
+            print("output URL: {}".format(response.output_url))
+            print("model  URL: {}".format(response.model_url))
+            if "Fail" in [response.output_url, response.model_url]:
+                exit(1)
         else:
             print("Invalid method!")
             exit(1)

@@ -85,7 +85,11 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
             self.response.model_url = str(tmp_response["model_url"]).encode("utf-8")
             self.response.output_url = str(tmp_response["output_url"]).encode("utf-8")
 
-            log.debug("slot_tagging({})={},{}".format(self.sentences_url, self.response.output_url, self.model_url))
+            log.debug("slot_tagging({})={},{}".format(
+                self.sentences_url,
+                self.response.output_url,
+                self.response.model_url)
+            )
 
             # Unlock GPU usage
             release_gpu(gpu_queue_id)
