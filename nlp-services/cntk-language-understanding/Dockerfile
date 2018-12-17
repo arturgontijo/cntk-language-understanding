@@ -30,7 +30,7 @@ RUN cd ${SINGNET_REPOS} && \
 RUN cd ${SERVICES_FOLDER} && \
     git clone https://github.com/arturgontijo/cntk-language-understanding.git
 
-RUN cd ${SERVICE_NAME} && \
+RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
     sh -c "echo '{ \"DAEMON_END_POINT\": \"http://54.203.198.53:${SNETD_PORT}\", \
                    \"ETHEREUM_JSON_RPC_ENDPOINT\": \"https://kovan.infura.io\", \
                    \"IPFS_END_POINT\": \"http://ipfs.singularitynet.io:80\", \
@@ -47,7 +47,7 @@ RUN cd ${SERVICE_NAME} && \
                    } \
                 }'" > ${SNETD_CONFIG}
 
-RUN cd ${SERVICE_NAME} && \
+RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
     /root/anaconda3/envs/cntk-py35/bin/python -m pip install -r requirements.txt && \
     sh buildproto.sh
 
