@@ -210,6 +210,7 @@ class SlotTagging:
         # let"s run a sequence through
         sentences_file = self.download(self.sentences_url, save=False)
         sentences = sentences_file.split("\n")
+        log.debug("Sentences: {}".format(sentences))
         output = []
         for sent in sentences:
             if not ("BOS" and "EOS") in sent:
@@ -227,10 +228,10 @@ class SlotTagging:
             best = np.argmax(pred, axis=1)
             output.append(str(list(zip(seq.split(), [slots_wl[s] for s in best]))))
 
-        log.info(output)
+        log.info("Output: {}".format(output))
         output_file = "{}_out.txt".format(sentences_file.split(".")[0])
         with open(output_file, "w+") as f:
-            for idx, line in enumerate(sentences_file):
+            for idx, line in enumerate(sentences):
                 f.write("{}: {}\n{}: {}\n".format(idx, line, idx, output[idx]))
 
         self.response["output_url"] = "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/{}".format(output_file)

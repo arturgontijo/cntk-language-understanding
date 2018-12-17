@@ -1,5 +1,6 @@
 import sys
 import logging
+import traceback
 
 import grpc
 import concurrent.futures as futures
@@ -64,6 +65,7 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
             return self.response
 
         except Exception as e:
+            traceback.print_exc()
             log.error(e)
             self.response = Output()
             self.response.output_url = "Fail"
