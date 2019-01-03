@@ -88,3 +88,38 @@ Output file content:
 2: BOS i want to book a flight from miami to atlanta by american airlines EOS
 2: [('BOS', 'O'), ('i', 'O'), ('want', 'O'), ('to', 'O'), ('book', 'O'), ('a', 'O'), ('flight', 'O'), ('from', 'O'), ('miami', 'B-fromloc.city_name'), ('to', 'O'), ('atlanta', 'B-toloc.city_name'), ('by', 'O'), ('american', 'B-airline_name'), ('airlines', 'I-airline_name'), ('EOS', 'O')]
 ```
+
+Input:
+
+ - `gRPC method`: intent.
+ - `train_ctf_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.train.ctf?raw=true".
+ - `test_ctf_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.test.ctf?raw=true".
+ - `query_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/query.wl?raw=true".
+ - `slots_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/slots.wl?raw=true".
+ - `intent_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/intent.wl?raw=true".
+ - `vocab_size`: 943.
+ - `num_labels`: 129.
+ - `num_intents`: 26.
+ - `sentences_url`: "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Example/sentences.txt".
+
+Response:
+
+```
+response:
+output URL: http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/684bb98e0ef1537c1b7d.txt
+model  URL: http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/684bb98e0ef1537c1b7d.model
+```
+
+Sentences file input content:
+```
+BOS flights from new york to seattle by delta airlines EOS
+BOS departures from los angeles to san diego EOS
+BOS i want to book a flight from miami to atlanta by american airlines EOS
+```
+
+Output file content:
+```
+0: BOS flights from new york to seattle by delta airlines EOS -> flight
+1: BOS departures from los angeles to san diego EOS -> flight
+2: BOS i want to book a flight from miami to atlanta by american airlines EOS -> flight
+```

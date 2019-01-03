@@ -295,7 +295,7 @@ class LanguageUnderstanding:
             else:
                 seq = sent
 
-            w = [query_dict[w] for w in seq.split()]
+            w = [query_dict[w] for w in seq.split() if w in query_dict]
             one_hot = np.zeros([len(w), len(query_dict)], np.float32)
             for t in range(len(w)):
                 one_hot[t, w[t]] = 1

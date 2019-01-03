@@ -6,7 +6,7 @@
 # CNTK Language Understanding
 
 This service uses [CNTK Language Understanding](https://cntk.ai/pythondocs/CNTK_202_Language_Understanding.html)
-to process text and perform slot tagging and/or intent classification.
+to process text and offer two options: slot tagging or intent classification.
 
 It is part of our [NLP Services](https://github.com/singnet/nlp-services).
 
