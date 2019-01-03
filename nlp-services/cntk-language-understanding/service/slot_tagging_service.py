@@ -83,6 +83,9 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
                 self.query_wl_url,
                 self.slots_wl_url,
                 self.intent_wl_url,
+                self.vocab_size,
+                self.num_labels,
+                self.num_intents,
                 self.sentences_url
             )
 

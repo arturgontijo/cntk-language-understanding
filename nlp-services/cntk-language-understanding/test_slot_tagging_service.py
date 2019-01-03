@@ -24,7 +24,7 @@ if __name__ == "__main__":
         channel = grpc.insecure_channel("{}".format(endpoint))
 
         default = "slot_tagging"
-        grpc_method = input("Method (slot_tagging): ") if not test_flag else "slot_tagging"
+        grpc_method = input("Method (slot_tagging): ") if not test_flag else default
         if grpc_method == "":
             grpc_method = default
 

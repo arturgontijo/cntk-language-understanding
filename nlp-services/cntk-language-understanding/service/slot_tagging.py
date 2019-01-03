@@ -24,21 +24,22 @@ class SlotTagging:
             query_wl_url,
             slots_wl_url,
             intent_wl_url,
-            sentences_url,
             vocab_size,
             num_labels,
-            num_intents
+            num_intents,
+            sentences_url,
     ):
         self.train_ctf_url = train_ctf_url
         self.test_ctf_url = test_ctf_url
         self.query_wl_url = query_wl_url
         self.slots_wl_url = slots_wl_url
         self.intent_wl_url = intent_wl_url
-        self.sentences_url = sentences_url
 
         self.vocab_size = vocab_size
         self.num_labels = num_labels
         self.num_intents = num_intents
+
+        self.sentences_url = sentences_url
 
         self.response = dict()
 
