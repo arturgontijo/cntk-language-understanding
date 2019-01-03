@@ -25,8 +25,6 @@ GPU_QUEUE_ID = -1
 # derived from the protobuf codes.
 class LanguageUnderstandingServicer(grpc_bt_grpc.LanguageUnderstandingServicer):
     def __init__(self):
-        self.intent_model = False
-
         self.train_ctf_url = ""
         self.test_ctf_url = ""
         self.query_wl_url = ""
@@ -76,8 +74,6 @@ class LanguageUnderstandingServicer(grpc_bt_grpc.LanguageUnderstandingServicer):
             self.vocab_size = request.vocab_size
             self.num_labels = request.num_labels
             self.num_intents = request.num_intents
-
-            self.intent_model = request.intent_model
 
             self.sentences_url = request.sentences_url
 
@@ -158,8 +154,6 @@ class LanguageUnderstandingServicer(grpc_bt_grpc.LanguageUnderstandingServicer):
             self.vocab_size = request.vocab_size
             self.num_labels = request.num_labels
             self.num_intents = request.num_intents
-
-            self.intent_model = request.intent_model
 
             self.sentences_url = request.sentences_url
 
