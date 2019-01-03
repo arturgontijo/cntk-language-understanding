@@ -58,6 +58,21 @@ if __name__ == "__main__":
         if intent_wl_url == "":
             intent_wl_url = default
 
+        default = 943
+        vocab_size = input("vocab_size (943): ") if not test_flag else default
+        if vocab_size == "":
+            vocab_size = default
+
+        default = 129
+        num_labels = input("num_labels (129): ") if not test_flag else default
+        if num_labels == "":
+            num_labels = default
+
+        default = 26
+        num_intents = input("num_intents (26): ") if not test_flag else default
+        if num_intents == "":
+            num_intents = default
+
         if grpc_method == "slot_tagging":
             stub = grpc_bt_grpc.SlotTaggingStub(channel)
 
@@ -67,6 +82,9 @@ if __name__ == "__main__":
                 query_wl_url=query_wl_url,
                 slots_wl_url=slots_wl_url,
                 intent_wl_url=intent_wl_url,
+                vocab_size=vocab_size,
+                num_labels=num_labels,
+                num_intents=num_intents,
                 sentences_url=sentences_url
             )
 

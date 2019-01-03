@@ -6,7 +6,10 @@ message Input {
     string query_wl_url = 3;
     string slots_wl_url = 4;
     string intent_wl_url = 5;
-    string sentences_url = 6;
+    int32 vocab_size = 6;
+    int32 num_labels = 7;
+    int32 num_intents = 8;
+    string sentences_url = 9;
 }
 
 message Output {

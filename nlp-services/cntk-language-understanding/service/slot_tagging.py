@@ -17,13 +17,28 @@ log = logging.getLogger("slot_tagging")
 
 class SlotTagging:
 
-    def __init__(self, train_ctf_url, test_ctf_url, query_wl_url, slots_wl_url, intent_wl_url, sentences_url):
+    def __init__(
+            self,
+            train_ctf_url,
+            test_ctf_url,
+            query_wl_url,
+            slots_wl_url,
+            intent_wl_url,
+            sentences_url,
+            vocab_size,
+            num_labels,
+            num_intents
+    ):
         self.train_ctf_url = train_ctf_url
         self.test_ctf_url = test_ctf_url
         self.query_wl_url = query_wl_url
         self.slots_wl_url = slots_wl_url
         self.intent_wl_url = intent_wl_url
         self.sentences_url = sentences_url
+
+        self.vocab_size = vocab_size
+        self.num_labels = num_labels
+        self.num_intents = num_intents
 
         self.response = dict()
 
@@ -208,9 +223,9 @@ class SlotTagging:
                 log.info("{}: Reusing...".format(data_source[0]))
 
         # number of words in vocab, slot labels, and intent labels
-        vocab_size = 943
-        num_labels = 129
-        num_intents = 26
+        vocab_size = self.vocab_size
+        num_labels = self.num_labels
+        num_intents = self.num_intents
 
         # model dimensions
         emb_dim = 150

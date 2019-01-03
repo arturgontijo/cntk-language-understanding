@@ -32,6 +32,10 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
         self.intent_wl_url = ""
         self.sentences_url = ""
 
+        self.vocab_size = 0
+        self.num_labels = 0
+        self.num_intents = 0
+
         self.response = None
 
         log.debug("SlotTaggingServicer created")
@@ -66,6 +70,10 @@ class SlotTaggingServicer(grpc_bt_grpc.SlotTaggingServicer):
             self.query_wl_url = request.query_wl_url
             self.slots_wl_url = request.slots_wl_url
             self.intent_wl_url = request.intent_wl_url
+
+            self.vocab_size = request.vocab_size
+            self.num_labels = request.num_labels
+            self.num_intents = request.num_intents
 
             self.sentences_url = request.sentences_url
 

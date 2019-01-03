@@ -67,7 +67,7 @@ jobs:
       SERVICE_NAME: cntk-language-understanding
       SERVICE_RUN_COMMAND: bash -c "source '/cntk/activate-cntk';git pull;python3 run_slot_tagging_service.py"
       SERVICE_TEST_COMMAND: bash -c "source '/cntk/activate-cntk';python3 test_slot_tagging_service.py auto"
-      SNETD_PORT: 7004
+      SNETD_PORT: 7075
     steps:
       - bnd_cmd:
           docker_image_name: cntk-language-understanding
