@@ -29,7 +29,7 @@ commands:
                 --build-arg git_owner=${CIRCLE_PROJECT_USERNAME} \
                 --build-arg git_repo=${CIRCLE_PROJECT_REPONAME} \
                 --build-arg git_branch=${CIRCLE_BRANCH} \
-                -t ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git#${CIRCLE_BRANCH}:/Services/gRPC/${SERVICE_NAME}
+                -t ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git#${CIRCLE_BRANCH}:${SERVICE_FOLDER}
               nvidia-docker run --runtime=nvidia \
                 --name ${PROD_TAG}${DOCKER_CONTAINER_NAME} \
                 --restart unless-stopped \
@@ -64,7 +64,7 @@ jobs:
     - image: circleci/python:3.6.6-node
     working_directory: ~/singnet
     environment:
-      SERVICE_NAME: cntk-language-understanding
+      SERVICE_FOLDER: nlp-services/cntk-language-understanding
       SERVICE_RUN_COMMAND: bash -c "source '/cntk/activate-cntk';git pull;python3 run_slot_tagging_service.py"
       SERVICE_TEST_COMMAND: bash -c "source '/cntk/activate-cntk';python3 test_slot_tagging_service.py auto"
       SNETD_PORT: 7075
