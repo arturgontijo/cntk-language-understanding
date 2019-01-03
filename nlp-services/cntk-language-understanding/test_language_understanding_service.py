@@ -1,5 +1,6 @@
 import sys
 import grpc
+import traceback
 
 # import the generated classes
 import service.service_spec.language_understanding_pb2_grpc as grpc_bt_grpc
@@ -122,4 +123,5 @@ if __name__ == "__main__":
 
     except Exception as e:
         print(e)
+        traceback.print_exc()
         exit(1)

@@ -16,7 +16,6 @@ log = logging.getLogger("language_understanding")
 
 
 class LanguageUnderstanding:
-
     def __init__(self,
                  train_ctf_url,
                  test_ctf_url,
@@ -242,17 +241,20 @@ class LanguageUnderstanding:
         emb_dim = 150
         hidden_dim = 300
 
-        # Create the containers for input feature (x) and the label (y)
+        # Create the containers for input feature (x)
         x_input = C.sequence.input_variable(vocab_size)
-        y_input = C.sequence.input_variable(num_labels)
 
         # Training the models
         reader = self.create_reader(user_data["train"][0], vocab_size, num_intents, num_labels, is_training=True)
         if intent_model:
+            #  label (y)
+            y_input = C.sequence.input_variable(num_intents)
             z_intent = self.create_model_intent(emb_dim, hidden_dim, num_intents)
             z_intent = self.train(x_input, y_input, reader, z_intent, task="intent")
             z = z_intent
         else:
+            #  label (y)
+            y_input = C.sequence.input_variable(num_labels)
             z_slot_tagging = self.create_model_slot(emb_dim, hidden_dim, num_labels)
             z_slot_tagging = self.train(x_input, y_input, reader, z_slot_tagging, task="slot_tagging")
             z = z_slot_tagging
