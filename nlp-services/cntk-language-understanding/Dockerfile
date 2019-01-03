@@ -39,8 +39,8 @@ RUN cd ${SINGNET_REPOS}/${GITHUB_REPO_NAME}/nlp-services/${SERVICE_NAME} && \
                    \"REGISTRY_ADDRESS_KEY\": \"0xe331bf20044a5b24c1a744abc90c1fd711d2c08d\", \
                    \"PASSTHROUGH_ENABLED\": true, \
                    \"PASSTHROUGH_ENDPOINT\": \"http://localhost:7003\", \
-                   \"ORGANIZATION_NAME\": \"snet\", \
-                   \"SERVICE_NAME\": \"${SERVICE_NAME}\", \
+                   \"ORGANIZATION_ID\": \"snet\", \
+                   \"SERVICE_ID\": \"${SERVICE_NAME}\", \
                    \"LOG\": { \
                    \"LEVEL\": \"debug\", \
                    \"OUTPUT\": { \
