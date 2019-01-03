@@ -6,7 +6,7 @@
 # CNTK Language Understanding
 
 This service uses [CNTK Language Understanding](https://cntk.ai/pythondocs/CNTK_202_Language_Understanding.html)
-to process text and perform slot tagging.
+to process text and perform slot tagging and/or intent classification.
 
 It is part of our [NLP Services](https://github.com/singnet/nlp-services).
 
@@ -83,14 +83,14 @@ $ sh buildproto.sh
 ```
 Start the service and `SNET Daemon`:
 ```
-$ python3 run_slot_tagging_service.py
+$ python3 run_language_understanding_service.py
 ```
 
 ### Calling the service:
 
 Inputs:
 
- - `gRPC method`: slot_tagging.
+ - `gRPC method`: slot_tagging or intent.
  - `train_ctf_url`: URL of the training file.
  - `test_ctf_url`: URL of the test file.
  - `query_wl_url`: URL of the query file.
@@ -104,9 +104,9 @@ Inputs:
 Local (testing purpose):
 
 ```
-$ python3 test_slot_tagging_service.py
+$ python3 test_language_understanding_service.py
 Endpoint (localhost:7003): 
-Method (slot_tagging): 
+Method (slot_tagging|intent): slot_tagging
 sentences (URL, one per line):
 train_ctf_url (ATIS Link): 
 test_ctf_url (ATIS Link): 
@@ -133,7 +133,7 @@ to learn how to publish a service and open a payment channel to be able to call 
 Assuming that you have an open channel (`id: 0`) to this service:
 
 ```
-$ snet client call 0 0.00000001 54.203.198.53:7075 slot_tagging '{"train_ctf_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.train.ctf?raw=true", "test_ctf_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.test.ctf?raw=true", "query_wl_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/query.wl?raw=true", "slots_wl_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/slots.wl?raw=true", "intent_wl_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/intent.wl?raw=true", "vocab_size": 943, "num_labels": 129, "num_intents": 26, "sentences_url": "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Example/sentences.txt"}'
+$ snet client call 0 0.00000001 54.203.198.53:7075 intent '{"train_ctf_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.train.ctf?raw=true", "test_ctf_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.test.ctf?raw=true", "query_wl_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/query.wl?raw=true", "slots_wl_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/slots.wl?raw=true", "intent_wl_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/intent.wl?raw=true", "vocab_size": 943, "num_labels": 129, "num_intents": 26, "sentences_url": "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Example/sentences.txt"}'
 unspent_amount_in_cogs before call (None means that we cannot get it now):1
 
 response:
@@ -141,14 +141,14 @@ output URL: http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/684bb98e
 model  URL: http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/684bb98e0ef1537c1b7d.model
 ```
 
-Our sentences file input content:
+The input sentences file content:
 ```
 BOS flights from new york to seattle by delta airlines EOS
 BOS departures from los angeles to san diego EOS
 BOS i want to book a flight from miami to atlanta by american airlines EOS
 ```
 
-The output file content of service:
+The output file content:
 ```
 0: BOS flights from new york to seattle by delta airlines EOS
 0: [('BOS', 'O'), ('flights', 'O'), ('from', 'O'), ('new', 'B-fromloc.city_name'), ('york', 'I-fromloc.city_name'), ('to', 'O'), ('seattle', 'B-toloc.city_name'), ('by', 'O'), ('delta', 'B-airline_name'), ('airlines', 'I-airline_name'), ('EOS', 'O')]

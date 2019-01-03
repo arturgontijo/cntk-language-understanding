@@ -12,23 +12,23 @@ cntk.tests.test_utils.set_device_from_pytest_env()  # (only needed for our build
 C.cntk_py.set_fixed_random_seed(1)  # fix a random seed for CNTK components
 
 logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
-log = logging.getLogger("slot_tagging")
+log = logging.getLogger("language_understanding")
 
 
-class SlotTagging:
+class LanguageUnderstanding:
 
-    def __init__(
-            self,
-            train_ctf_url,
-            test_ctf_url,
-            query_wl_url,
-            slots_wl_url,
-            intent_wl_url,
-            vocab_size,
-            num_labels,
-            num_intents,
-            sentences_url,
-    ):
+    def __init__(self,
+                 train_ctf_url,
+                 test_ctf_url,
+                 query_wl_url,
+                 slots_wl_url,
+                 intent_wl_url,
+                 vocab_size,
+                 num_labels,
+                 num_intents,
+                 sentences_url
+                 ):
+
         self.train_ctf_url = train_ctf_url
         self.test_ctf_url = test_ctf_url
         self.query_wl_url = query_wl_url
@@ -68,12 +68,22 @@ class SlotTagging:
             return False
 
     @staticmethod
-    def create_model(emb_dim, hidden_dim, num_labels):
+    def create_model_slot(emb_dim, hidden_dim, num_labels):
         with C.layers.default_options(initial_state=0.1):
             return C.layers.Sequential([
                 C.layers.Embedding(emb_dim, name="embed"),
                 C.layers.Recurrence(C.layers.LSTM(hidden_dim), go_backwards=False),
                 C.layers.Dense(num_labels, name="classify")
+            ])
+
+    @staticmethod
+    def create_model_intent(emb_dim, hidden_dim, num_intents):
+        with C.layers.default_options(initial_state=0.1):
+            return C.layers.Sequential([
+                C.layers.Embedding(emb_dim, name='embed'),
+                C.layers.Stabilizer(),
+                C.sequence.reduce_sum(C.layers.Recurrence(C.layers.LSTM(hidden_dim), go_backwards=False)),
+                C.layers.Dense(num_intents, name='classify')
             ])
 
     @staticmethod
@@ -182,7 +192,7 @@ class SlotTagging:
         else:
             log.error("Error: evaluator is None")
 
-    def slot_tagging(self):
+    def language_understanding(self, intent_model=False):
 
         self.response = {
             "model_url": "Fail",
@@ -236,22 +246,31 @@ class SlotTagging:
         x_input = C.sequence.input_variable(vocab_size)
         y_input = C.sequence.input_variable(num_labels)
 
-        z = self.create_model(emb_dim, hidden_dim, num_labels)
-
-        # Training the model
+        # Training the models
         reader = self.create_reader(user_data["train"][0], vocab_size, num_intents, num_labels, is_training=True)
-        z = self.train(x_input, y_input, reader, z)
+        if intent_model:
+            z_intent = self.create_model_intent(emb_dim, hidden_dim, num_intents)
+            z_intent = self.train(x_input, y_input, reader, z_intent, task="intent")
+            z = z_intent
+        else:
+            z_slot_tagging = self.create_model_slot(emb_dim, hidden_dim, num_labels)
+            z_slot_tagging = self.train(x_input, y_input, reader, z_slot_tagging, task="slot_tagging")
+            z = z_slot_tagging
 
-        # Testing the model
+        # Testing the models
         if os.path.exists(user_data["test"][0]):
             reader = self.create_reader(user_data["test"][0], vocab_size, num_intents, num_labels, is_training=False)
-            self.evaluate(x_input, y_input, reader, z)
+            if intent_model:
+                self.evaluate(x_input, y_input, reader, z, task="intent")
+            else:
+                self.evaluate(x_input, y_input, reader, z, task="slot_tagging")
 
         # load dictionaries
         query_wl = [line.rstrip("\n") for line in open(user_data["query"][0])]
         slots_wl = [line.rstrip("\n") for line in open(user_data["slots"][0])]
+        intent_wl = [line.rstrip("\n") for line in open(user_data["intent"][0])]
         query_dict = {query_wl[i]: i for i in range(len(query_wl))}
-        # slots_dict = {slots_wl[i]: i for i in range(len(slots_wl))}
+        intent_dict = {intent_wl[i]: i for i in range(len(intent_wl))}
 
         # let"s run a sequence through
         sentences_file_content = self.download(self.sentences_url, save=False)
@@ -269,10 +288,13 @@ class SlotTagging:
             for t in range(len(w)):
                 one_hot[t, w[t]] = 1
 
-            # x = C.sequence.input_variable(vocab_size)
             pred = z(x_input).eval({x_input: [one_hot]})[0]
-            best = np.argmax(pred, axis=1)
-            output.append(str(list(zip(seq.split(), [slots_wl[s] for s in best]))))
+            if intent_model:
+                best = np.argmax(pred)
+                output.append("{}:{}".format(seq, intent_wl[int(best)]))
+            else:
+                best = np.argmax(pred, axis=1)
+                output.append(str(list(zip(seq.split(), [slots_wl[s] for s in best]))))
 
         output_folder = "/opt/singnet/output"
         if not os.path.exists(output_folder):

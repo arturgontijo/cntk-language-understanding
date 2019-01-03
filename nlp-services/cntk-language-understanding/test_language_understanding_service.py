@@ -2,8 +2,8 @@ import sys
 import grpc
 
 # import the generated classes
-import service.service_spec.slot_tagging_pb2_grpc as grpc_bt_grpc
-import service.service_spec.slot_tagging_pb2 as grpc_bt_pb2
+import service.service_spec.language_understanding_pb2_grpc as grpc_bt_grpc
+import service.service_spec.language_understanding_pb2 as grpc_bt_pb2
 
 from service import registry
 
@@ -16,15 +16,15 @@ if __name__ == "__main__":
                 test_flag = True
 
         # Service ONE - Arithmetic
-        endpoint = input("Endpoint (localhost:{}): ".format(registry["slot_tagging_service"]["grpc"])) if not test_flag else ""
+        endpoint = input("Endpoint (localhost:{}): ".format(registry["language_understanding_service"]["grpc"])) if not test_flag else ""
         if endpoint == "":
-            endpoint = "localhost:{}".format(registry["slot_tagging_service"]["grpc"])
+            endpoint = "localhost:{}".format(registry["language_understanding_service"]["grpc"])
 
         # Open a gRPC channel
         channel = grpc.insecure_channel("{}".format(endpoint))
 
         default = "slot_tagging"
-        grpc_method = input("Method (slot_tagging): ") if not test_flag else default
+        grpc_method = input("Method (slot_tagging|intent): ") if not test_flag else default
         if grpc_method == "":
             grpc_method = default
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
             num_intents = default
 
         if grpc_method == "slot_tagging":
-            stub = grpc_bt_grpc.SlotTaggingStub(channel)
+            stub = grpc_bt_grpc.LanguageUnderstandingStub(channel)
 
             request = grpc_bt_pb2.Input(
                 train_ctf_url=train_ctf_url,
@@ -89,6 +89,28 @@ if __name__ == "__main__":
             )
 
             response = stub.slot_tagging(request)
+            print("\nresponse:")
+            print("output URL: {}".format(response.output_url))
+            print("model  URL: {}".format(response.model_url))
+            if "Fail" in [response.output_url, response.model_url]:
+                exit(1)
+
+        elif grpc_method == "intent":
+            stub = grpc_bt_grpc.LanguageUnderstandingStub(channel)
+
+            request = grpc_bt_pb2.Input(
+                train_ctf_url=train_ctf_url,
+                test_ctf_url=test_ctf_url,
+                query_wl_url=query_wl_url,
+                slots_wl_url=slots_wl_url,
+                intent_wl_url=intent_wl_url,
+                vocab_size=vocab_size,
+                num_labels=num_labels,
+                num_intents=num_intents,
+                sentences_url=sentences_url
+            )
+
+            response = stub.intent(request)
             print("\nresponse:")
             print("output URL: {}".format(response.output_url))
             print("model  URL: {}".format(response.model_url))

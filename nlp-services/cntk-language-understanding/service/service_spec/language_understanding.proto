@@ -17,6 +17,7 @@ message Output {
     string output_url = 2;
 }
 
-service SlotTagging {
+service LanguageUnderstanding {
     rpc slot_tagging(Input) returns (Output) {}
+    rpc intent(Input) returns (Output) {}
 }

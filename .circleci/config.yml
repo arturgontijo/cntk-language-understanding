@@ -66,13 +66,13 @@ jobs:
     working_directory: ~/singnet
     environment:
       SERVICE_FOLDER: nlp-services/cntk-language-understanding
-      SERVICE_RUN_COMMAND: bash -c "source '/cntk/activate-cntk';git pull;python3 run_slot_tagging_service.py"
-      SERVICE_TEST_COMMAND: bash -c "source '/cntk/activate-cntk';python3 test_slot_tagging_service.py auto"
+      SERVICE_RUN_COMMAND: bash -c "source '/cntk/activate-cntk';git pull;python3 run_language_understanding_service.py"
+      SERVICE_TEST_COMMAND: bash -c "source '/cntk/activate-cntk';python3 test_language_understanding_service.py auto"
       SNETD_PORT: 7075
     steps:
       - bnd_cmd:
           docker_image_name: cntk-language-understanding
-          docker_container_name: ARTUR_CNTK_SLOT_TAGGING
+          docker_container_name: ARTUR_CNTK_LANGUAGE_UNDERSTANDING
 workflows:
   version: 2.1
   build-and-deploy:
