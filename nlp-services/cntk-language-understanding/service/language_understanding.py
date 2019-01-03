@@ -113,10 +113,10 @@ class LanguageUnderstanding:
         model = model_func(x)
 
         # Instantiate the loss and error function
-        # loss, label_error = self.create_criterion_function_preferred(model, y)
-        criterion = self.create_criterion_function(model)
-        criterion.replace_placeholders({criterion.placeholders[0]: y})
-        loss, label_error = criterion[0], criterion[1]
+        loss, label_error = self.create_criterion_function_preferred(model, y)
+        # criterion = self.create_criterion_function(model)
+        # criterion.replace_placeholders({criterion.placeholders[0]: y})
+        # loss, label_error = criterion[0], criterion[1]
 
         # training config
         epoch_size = 18000  # 18000 samples is half the dataset size
@@ -258,7 +258,7 @@ class LanguageUnderstanding:
         reader = self.create_reader(user_data["train"][0], vocab_size, num_intents, num_labels, is_training=True)
         if intent_model:
             #  label (y)
-            y_input = C.sequence.input_variable(num_intents)
+            y_input = C.input_variable(num_intents)
             z_intent = self.create_model_intent(emb_dim, hidden_dim, num_intents)
             z_intent = self.train(x_input, y_input, reader, z_intent, task="intent")
             z = z_intent
