@@ -323,7 +323,7 @@ class LanguageUnderstanding:
                 for idx, line in enumerate(output):
                     f.write("{}: {}\n".format(idx, output[idx]))
             else:
-                for idx, line in enumerate(output):
+                for idx, line in enumerate(sentences):
                     f.write("{}: {}\n{}: {}\n".format(idx, line, idx, output[idx]))
 
         # Removing old files (> 24h)

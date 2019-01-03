@@ -144,19 +144,24 @@ model  URL: http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/684bb98e
 The input sentences file content:
 ```
 BOS flights from new york to seattle by delta airlines EOS
+BOS how much is the ticket to washington from san francisco EOS
 BOS departures from los angeles to san diego EOS
+BOS what is the name of the main airport in chicago EOS
 BOS i want to book a flight from miami to atlanta by american airlines EOS
 ```
 
 The output file content:
 ```
-0: BOS flights from new york to seattle by delta airlines EOS
 0: [('BOS', 'O'), ('flights', 'O'), ('from', 'O'), ('new', 'B-fromloc.city_name'), ('york', 'I-fromloc.city_name'), ('to', 'O'), ('seattle', 'B-toloc.city_name'), ('by', 'O'), ('delta', 'B-airline_name'), ('airlines', 'I-airline_name'), ('EOS', 'O')]
-1: BOS departures from los angeles to san diego EOS
-1: [('BOS', 'O'), ('departures', 'O'), ('from', 'O'), ('los', 'B-fromloc.city_name'), ('angeles', 'I-fromloc.city_name'), ('to', 'O'), ('san', 'B-toloc.city_name'), ('diego', 'I-toloc.city_name'), ('EOS', 'O')]
-2: BOS i want to book a flight from miami to atlanta by american airlines EOS
-2: [('BOS', 'O'), ('i', 'O'), ('want', 'O'), ('to', 'O'), ('book', 'O'), ('a', 'O'), ('flight', 'O'), ('from', 'O'), ('miami', 'B-fromloc.city_name'), ('to', 'O'), ('atlanta', 'B-toloc.city_name'), ('by', 'O'), ('american', 'B-airline_name'), ('airlines', 'I-airline_name'), ('EOS', 'O')]
-```
+0: [('BOS', 'O'), ('flights', 'O'), ('from', 'O'), ('new', 'B-fromloc.city_name'), ('york', 'I-fromloc.city_name'), ('to', 'O'), ('seattle', 'B-toloc.city_name'), ('by', 'O'), ('delta', 'B-airline_name'), ('airlines', 'I-airline_name'), ('EOS', 'O')]
+1: [('BOS', 'O'), ('how', 'O'), ('much', 'O'), ('is', 'O'), ('the', 'O'), ('ticket', 'O'), ('to', 'O'), ('washington', 'B-toloc.city_name'), ('from', 'O'), ('san', 'B-fromloc.city_name'), ('francisco', 'I-fromloc.city_name'), ('EOS', 'O')]
+1: [('BOS', 'O'), ('how', 'O'), ('much', 'O'), ('is', 'O'), ('the', 'O'), ('ticket', 'O'), ('to', 'O'), ('washington', 'B-toloc.city_name'), ('from', 'O'), ('san', 'B-fromloc.city_name'), ('francisco', 'I-fromloc.city_name'), ('EOS', 'O')]
+2: [('BOS', 'O'), ('departures', 'O'), ('from', 'O'), ('los', 'B-fromloc.city_name'), ('angeles', 'I-fromloc.city_name'), ('to', 'O'), ('san', 'B-toloc.city_name'), ('diego', 'I-toloc.city_name'), ('EOS', 'O')]
+2: [('BOS', 'O'), ('departures', 'O'), ('from', 'O'), ('los', 'B-fromloc.city_name'), ('angeles', 'I-fromloc.city_name'), ('to', 'O'), ('san', 'B-toloc.city_name'), ('diego', 'I-toloc.city_name'), ('EOS', 'O')]
+3: [('BOS', 'O'), ('what', 'O'), ('is', 'O'), ('the', 'O'), ('name', 'O'), ('of', 'O'), ('the', 'O'), ('main', 'O'), ('airport', 'O'), ('in', 'B-city_name'), ('chicago', 'O')]
+3: [('BOS', 'O'), ('what', 'O'), ('is', 'O'), ('the', 'O'), ('name', 'O'), ('of', 'O'), ('the', 'O'), ('main', 'O'), ('airport', 'O'), ('in', 'B-city_name'), ('chicago', 'O')]
+4: [('BOS', 'O'), ('i', 'O'), ('want', 'O'), ('to', 'O'), ('book', 'O'), ('a', 'O'), ('flight', 'O'), ('from', 'O'), ('miami', 'B-fromloc.city_name'), ('to', 'O'), ('atlanta', 'B-toloc.city_name'), ('by', 'O'), ('american', 'B-airline_name'), ('airlines', 'I-airline_name'), ('EOS', 'O')]
+4: [('BOS', 'O'), ('i', 'O'), ('want', 'O'), ('to', 'O'), ('book', 'O'), ('a', 'O'), ('flight', 'O'), ('from', 'O'), ('miami', 'B-fromloc.city_name'), ('to', 'O'), ('atlanta', 'B-toloc.city_name'), ('by', 'O'), ('american', 'B-airline_name'), ('airlines', 'I-airline_name'), ('EOS', 'O')]```
 
 ## Contributing and Reporting Issues
 

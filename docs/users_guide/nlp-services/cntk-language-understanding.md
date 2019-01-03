@@ -113,13 +113,17 @@ model  URL: http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/684bb98e
 Sentences file input content:
 ```
 BOS flights from new york to seattle by delta airlines EOS
+BOS how much is the ticket to washington from san francisco EOS
 BOS departures from los angeles to san diego EOS
+BOS what is the name of the main airport in chicago EOS
 BOS i want to book a flight from miami to atlanta by american airlines EOS
 ```
 
 Output file content:
 ```
 0: BOS flights from new york to seattle by delta airlines EOS -> flight
-1: BOS departures from los angeles to san diego EOS -> flight
-2: BOS i want to book a flight from miami to atlanta by american airlines EOS -> flight
+1: BOS how much is the ticket to washington from san francisco EOS -> airfare
+2: BOS departures from los angeles to san diego EOS -> flight
+3: BOS what is the name of the main airport in chicago EOS -> airport
+4: BOS i want to book a flight from miami to atlanta by american airlines EOS -> flight
 ```
