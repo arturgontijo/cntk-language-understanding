@@ -1,43 +1,79 @@
-version: 2
-jobs:
-  deploy-cntk-language-understanding:
-    docker:
-      - image: circleci/python:3.6.6-node
-    working_directory: ~/singnet
-    environment:
-      SERVICE_NAME: cntk-language-understanding
-      SERVICE_RUN_SCRIPT: run_slot_tagging_service.py
-      SERVICE_TEST_SCRIPT: test_slot_tagging_service.py
-      SNETD_PORT: 7075
+commands:
+  bnd_cmd:
+    description: "Build and deploy SingularityNET Services"
+    parameters:
+      docker_image_name:
+        type: string
+        default: ""
+      docker_container_name:
+        type: string
+        default: ""
     steps:
       - run:
-          name: Deploy Over SSH
+          name: Build docker image
           command: |
-            ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST << EOF
-              nvidia-docker stop $DOCKER_CONTAINER_NAME_CNTK_LU || true && nvidia-docker rename $DOCKER_CONTAINER_NAME_CNTK_LU ${DOCKER_CONTAINER_NAME_CNTK_LU}_old || true
+            echo "==================================================== Configs ==================================================="
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
+            echo            git_user  : ${CIRCLE_PROJECT_USERNAME}
+            echo            git_repo  : ${CIRCLE_PROJECT_REPONAME}
+            echo            git_branch: ${CIRCLE_BRANCH}
+            echo DOCKER_IMAGE_NAME    : ${DOCKER_IMAGE_NAME}
+            echo DOCKER_CONTAINER_NAME: ${DOCKER_CONTAINER_NAME}
+            echo "================================================================================================================"
+
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+              nvidia-docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME} || true && nvidia-docker rename ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
               nvidia-docker build \
-                -t $DOCKER_IMAGE_NAME_CNTK_LU https://github.com/arturgontijo/cntk-language-understanding.git#master:/nlp-services/$SERVICE_NAME
+                --build-arg git_owner=${CIRCLE_PROJECT_USERNAME} \
+                --build-arg git_repo=${CIRCLE_PROJECT_REPONAME} \
+                --build-arg git_branch=${CIRCLE_BRANCH} \
+                -t ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git#${CIRCLE_BRANCH}:/Services/gRPC/${SERVICE_NAME}
               nvidia-docker run --runtime=nvidia \
-                --name $DOCKER_CONTAINER_NAME_CNTK_LU \
+                --name ${PROD_TAG}${DOCKER_CONTAINER_NAME} \
                 --restart unless-stopped \
-                -p $SNETD_PORT:$SNETD_PORT \
-                -v /home/admin/storage/LanguageUnderstanding/CNTK/Output:/opt/singnet/output \
-                -di $DOCKER_IMAGE_NAME_CNTK_LU bash -c "source '/cntk/activate-cntk';git pull;python3 $SERVICE_RUN_SCRIPT"
+                $([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "-p ${SNETD_PORT}:${SNETD_PORT}" || echo "") \
+                -di ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} ${SERVICE_RUN_COMMAND}
             EOF
       - run:
           name: Remove Old Docker Container
           command: |
-            ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST << EOF
-              nvidia-docker stop ${DOCKER_CONTAINER_NAME_CNTK_LU}_old || true && nvidia-docker rm ${DOCKER_CONTAINER_NAME_CNTK_LU}_old || true
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
+
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+            nvidia-docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true && nvidia-docker rm ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
             EOF
       - run:
           name: Test local
           command: |
-            ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST << EOF
-              nvidia-docker exec -i $DOCKER_CONTAINER_NAME_CNTK_LU bash -c "source '/cntk/activate-cntk';python3 $SERVICE_TEST_SCRIPT auto"
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
+
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+              nvidia-docker exec -i ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${SERVICE_TEST_COMMAND}
             EOF
+
+version: 2.1
+jobs:
+  deploy-cntk-language-understanding:
+    docker:
+    - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
+    environment:
+      SERVICE_NAME: cntk-language-understanding
+      SERVICE_RUN_COMMAND: bash -c "source '/cntk/activate-cntk';git pull;python3 run_slot_tagging_service.py"
+      SERVICE_TEST_COMMAND: bash -c "source '/cntk/activate-cntk';python3 test_slot_tagging_service.py auto"
+      SNETD_PORT: 7004
+    steps:
+      - bnd_cmd:
+          docker_image_name: cntk-language-understanding
+          docker_container_name: ARTUR_CNTK_SLOT_TAGGING
 workflows:
-  version: 2
+  version: 2.1
   build-and-deploy:
     jobs:
       - deploy-cntk-language-understanding
