@@ -42,10 +42,7 @@ RUN cd ${SINGNET_REPOS}/${GITHUB_REPO_NAME}/nlp-services/${SERVICE_NAME} && \
                    \"ORGANIZATION_ID\": \"snet\", \
                    \"SERVICE_ID\": \"${SERVICE_NAME}\", \
                    \"LOG\": { \
-                   \"LEVEL\": \"debug\", \
-                   \"OUTPUT\": { \
-                       \"TYPE\": \"stdout\" \
-                       } \
+                   \"LEVEL\": \"debug\" \
                    } \
                 }'" > ${SNETD_CONFIG}
 
