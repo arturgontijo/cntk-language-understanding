@@ -255,7 +255,7 @@ class SlotTagging:
 
         # let"s run a sequence through
         sentences_file_content = self.download(self.sentences_url, save=False)
-        sentences = sentences_file_content.split("\n")
+        sentences = sentences_file_content.split("\n")[:-1]
         log.debug("Sentences: {}".format(sentences))
         output = []
         for sent in sentences:

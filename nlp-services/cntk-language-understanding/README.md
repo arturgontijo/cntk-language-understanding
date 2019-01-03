@@ -5,7 +5,8 @@
 
 # CNTK Language Understanding
 
-[[SERVICE_DOCS_INTRO]]
+This service uses [CNTK Language Understanding](https://cntk.ai/pythondocs/CNTK_202_Language_Understanding.html)
+to process text and perform slot tagging.
 
 It is part of our [NLP Services](https://github.com/singnet/nlp-services).
 
@@ -27,7 +28,7 @@ $ cd nlp-services/cntk-language-understanding
 
 ### Running the service:
 
-To get the `ORGANIZATION_NAME` and `SERVICE_NAME` you must have already published a service 
+To get the `ORGANIZATION_ID` and `SERVICE_ID` you must have already published a service 
 (check this [link](https://github.com/singnet/wiki/tree/master/tutorials/howToPublishService)).
 
 Create the `SNET Daemon`'s config JSON file (`snetd.config.json`).
@@ -40,8 +41,8 @@ Create the `SNET Daemon`'s config JSON file (`snetd.config.json`).
    "REGISTRY_ADDRESS_KEY": "0xe331bf20044a5b24c1a744abc90c1fd711d2c08d",
    "PASSTHROUGH_ENABLED": true,
    "PASSTHROUGH_ENDPOINT": "SERVICE_GRPC_HOST:SERVICE_GRPC_PORT",  
-   "ORGANIZATION_NAME": "ORGANIZATION_NAME",
-   "SERVICE_NAME": "SERVICE_NAME",
+   "ORGANIZATION_ID": "ORGANIZATION_ID",
+   "SERVICE_ID": "SERVICE_ID",
    "LOG": {
        "LEVEL": "debug",
        "OUTPUT": {
@@ -62,8 +63,8 @@ $ cat snetd.config.json
    "REGISTRY_ADDRESS_KEY": "0xe331bf20044a5b24c1a744abc90c1fd711d2c08d",
    "PASSTHROUGH_ENABLED": true,
    "PASSTHROUGH_ENDPOINT": "http://localhost:7003",
-   "ORGANIZATION_NAME": "snet",
-   "SERVICE_NAME": "cntk-language-understanding",
+   "ORGANIZATION_ID": "snet",
+   "SERVICE_ID": "cntk-language-understanding",
    "LOG": {
        "LEVEL": "debug",
        "OUTPUT": {
@@ -88,18 +89,41 @@ $ python3 run_slot_tagging_service.py
 ### Calling the service:
 
 Inputs:
-  [[SERVICE_INPUT_DESCRIPTION_LIST]]
+
+ - `gRPC method`: slot_tagging.
+ - `train_ctf_url`: URL of the training file.
+ - `test_ctf_url`: URL of the test file.
+ - `query_wl_url`: URL of the query file.
+ - `slots_wl_url`: URL of the slots file.
+ - `intent_wl_url`: URL of the intent file.
+ - `vocab_size`: the size of vocabulary.
+ - `num_labels`: number of slot labels.
+ - `num_intents`: number of intent labels.
+ - `sentences_url`: URL of the sentences file.
 
 Local (testing purpose):
 
 ```
 $ python3 test_slot_tagging_service.py
-[[SERVICE_TEST_SCRIPT_CONSOLE_INPUTS]]
+Endpoint (localhost:7003): 
+Method (slot_tagging): 
+sentences (URL, one per line):
+train_ctf_url (ATIS Link): 
+test_ctf_url (ATIS Link): 
+query_wl_url (ATIS Link): 
+slots_wl_url (ATIS Link): 
+intent_wl_url (ATIS Link): 
+vocab_size (943): 
+num_labels (129): 
+num_intents (26):
 
-[[SERVICE_TEST_SCRIPT_CONSOLE_OUTPUTS]]
+response:
+output URL: http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/684bb98e0ef1537c1b7d.txt
+model  URL: http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/684bb98e0ef1537c1b7d.model
 ```
 
-  [[SERVICE_OUTPUT_DESCRIPTION_LIST]]
+The service returns 2 URLs. First one is the output of the trained model for the given sentences.
+The second is the trained model itself.
 
 For further instructions about the output of this service, check the [User's Guide](../../docs/users_guide/nlp-services/cntk-language-understanding.md).
 
@@ -109,9 +133,29 @@ to learn how to publish a service and open a payment channel to be able to call 
 Assuming that you have an open channel (`id: 0`) to this service:
 
 ```
-$ [[SERVICE_SNET_CALL_COMMAND]]
+$ snet client call 0 0.00000001 54.203.198.53:7075 slot_tagging '{"train_ctf_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.train.ctf?raw=true", "test_ctf_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.test.ctf?raw=true", "query_wl_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/query.wl?raw=true", "slots_wl_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/slots.wl?raw=true", "intent_wl_url": "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/intent.wl?raw=true", "vocab_size": 943, "num_labels": 129, "num_intents": 26, "sentences_url": "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Example/sentences.txt"}'
 unspent_amount_in_cogs before call (None means that we cannot get it now):1
-[[SERVICE_SNET_CALL_RESPONSE]]
+
+response:
+output URL: http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/684bb98e0ef1537c1b7d.txt
+model  URL: http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Output/684bb98e0ef1537c1b7d.model
+```
+
+Our sentences file input content:
+```
+BOS flights from new york to seattle by delta airlines EOS
+BOS departures from los angeles to san diego EOS
+BOS i want to book a flight from miami to atlanta by american airlines EOS
+```
+
+The output file content of service:
+```
+0: BOS flights from new york to seattle by delta airlines EOS
+0: [('BOS', 'O'), ('flights', 'O'), ('from', 'O'), ('new', 'B-fromloc.city_name'), ('york', 'I-fromloc.city_name'), ('to', 'O'), ('seattle', 'B-toloc.city_name'), ('by', 'O'), ('delta', 'B-airline_name'), ('airlines', 'I-airline_name'), ('EOS', 'O')]
+1: BOS departures from los angeles to san diego EOS
+1: [('BOS', 'O'), ('departures', 'O'), ('from', 'O'), ('los', 'B-fromloc.city_name'), ('angeles', 'I-fromloc.city_name'), ('to', 'O'), ('san', 'B-toloc.city_name'), ('diego', 'I-toloc.city_name'), ('EOS', 'O')]
+2: BOS i want to book a flight from miami to atlanta by american airlines EOS
+2: [('BOS', 'O'), ('i', 'O'), ('want', 'O'), ('to', 'O'), ('book', 'O'), ('a', 'O'), ('flight', 'O'), ('from', 'O'), ('miami', 'B-fromloc.city_name'), ('to', 'O'), ('atlanta', 'B-toloc.city_name'), ('by', 'O'), ('american', 'B-airline_name'), ('airlines', 'I-airline_name'), ('EOS', 'O')]
 ```
 
 ## Contributing and Reporting Issues
