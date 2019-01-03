@@ -303,7 +303,7 @@ class LanguageUnderstanding:
             pred = z(x_input).eval({x_input: [one_hot]})[0]
             if intent_model:
                 best = np.argmax(pred)
-                output.append("{}:{}".format(seq, intent_wl[int(best)]))
+                output.append("{} -> {}".format(seq, intent_wl[int(best)]))
             else:
                 best = np.argmax(pred, axis=1)
                 output.append(str(list(zip(seq.split(), [slots_wl[s] for s in best]))))
@@ -319,8 +319,12 @@ class LanguageUnderstanding:
         log.info("Output: {}".format(output))
         output_file = "{}.txt".format(uid)
         with open("{}/{}".format(output_folder, output_file), "w+") as f:
-            for idx, line in enumerate(sentences):
-                f.write("{}: {}\n{}: {}\n".format(idx, line, idx, output[idx]))
+            if intent_model:
+                for idx, line in enumerate(output):
+                    f.write("{}: {}\n".format(idx, output[idx]))
+            else:
+                for idx, line in enumerate(output):
+                    f.write("{}: {}\n{}: {}\n".format(idx, line, idx, output[idx]))
 
         # Removing old files (> 24h)
         self.delete_old_files(data_folder)
