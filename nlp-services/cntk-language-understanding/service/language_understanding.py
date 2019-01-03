@@ -99,6 +99,13 @@ class LanguageUnderstanding:
         errs = C.classification_error(model, labels)
         return ce, errs  # (model, labels) -> (loss, error metric)
 
+    @staticmethod
+    def create_criterion_function(model):
+        labels = C.placeholder(name='labels')
+        ce = C.cross_entropy_with_softmax(model, labels)
+        errs = C.classification_error(model, labels)
+        return C.combine([ce, errs])  # (features, labels) -> (loss, metric)
+
     def train(self, x, y, reader, model_func, max_epochs=10, task="slot_tagging"):
         log.info("Training...")
 
@@ -106,7 +113,10 @@ class LanguageUnderstanding:
         model = model_func(x)
 
         # Instantiate the loss and error function
-        loss, label_error = self.create_criterion_function_preferred(model, y)
+        # loss, label_error = self.create_criterion_function_preferred(model, y)
+        criterion = self.create_criterion_function(model)
+        criterion.replace_placeholders({criterion.placeholders[0]: y})
+        loss, label_error = criterion[0], criterion[1]
 
         # training config
         epoch_size = 18000  # 18000 samples is half the dataset size
