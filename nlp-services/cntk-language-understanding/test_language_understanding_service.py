@@ -74,21 +74,21 @@ if __name__ == "__main__":
         if num_intents == "":
             num_intents = default
 
+        stub = grpc_bt_grpc.LanguageUnderstandingStub(channel)
+
+        request = grpc_bt_pb2.Input(
+            train_ctf_url=train_ctf_url,
+            test_ctf_url=test_ctf_url,
+            query_wl_url=query_wl_url,
+            slots_wl_url=slots_wl_url,
+            intent_wl_url=intent_wl_url,
+            vocab_size=int(vocab_size),
+            num_labels=int(num_labels),
+            num_intents=int(num_intents),
+            sentences_url=sentences_url
+        )
+
         if grpc_method == "slot_tagging":
-            stub = grpc_bt_grpc.LanguageUnderstandingStub(channel)
-
-            request = grpc_bt_pb2.Input(
-                train_ctf_url=train_ctf_url,
-                test_ctf_url=test_ctf_url,
-                query_wl_url=query_wl_url,
-                slots_wl_url=slots_wl_url,
-                intent_wl_url=intent_wl_url,
-                vocab_size=int(vocab_size),
-                num_labels=int(num_labels),
-                num_intents=int(num_intents),
-                sentences_url=sentences_url
-            )
-
             response = stub.slot_tagging(request)
             print("\nresponse:")
             print("output URL: {}".format(response.output_url))
@@ -97,20 +97,6 @@ if __name__ == "__main__":
                 exit(1)
 
         elif grpc_method == "intent":
-            stub = grpc_bt_grpc.LanguageUnderstandingStub(channel)
-
-            request = grpc_bt_pb2.Input(
-                train_ctf_url=train_ctf_url,
-                test_ctf_url=test_ctf_url,
-                query_wl_url=query_wl_url,
-                slots_wl_url=slots_wl_url,
-                intent_wl_url=intent_wl_url,
-                vocab_size=vocab_size,
-                num_labels=num_labels,
-                num_intents=num_intents,
-                sentences_url=sentences_url
-            )
-
             response = stub.intent(request)
             print("\nresponse:")
             print("output URL: {}".format(response.output_url))
