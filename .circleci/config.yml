@@ -10,7 +10,7 @@ commands:
         default: ""
       docker_mount_volumes:
         type: boolean
-        default: ""
+        default: false
       docker_mount_src:
         type: string
         default: ""
