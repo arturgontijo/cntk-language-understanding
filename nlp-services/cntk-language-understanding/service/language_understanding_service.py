@@ -119,9 +119,7 @@ class LanguageUnderstandingServicer(grpc_bt_grpc.LanguageUnderstandingServicer):
             self.response.output_url = "Fail"
             return self.response
 
-        # The method that will be exposed to the snet-cli call command.
-        # request: incoming data
-        # context: object that provides RPC-specific information (timeout, etc).
+    # Intent classification
     def intent(self, request, context):
 
         gpu_queue_id = get_gpu_queue_id()

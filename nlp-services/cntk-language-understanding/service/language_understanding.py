@@ -4,6 +4,7 @@ import glob
 import datetime
 import hashlib
 import logging
+import datetime
 
 import numpy as np
 import cntk as C
@@ -207,15 +208,16 @@ class LanguageUnderstanding:
             "model_url": "Fail",
             "output_url": "Fail"
         }
-
         # Setting a hash accordingly to the inputs (URLs)
-        seed = "{}{}{}{}{}{}".format(
+        seed = "{}{}{}{}{}{}{}".format(
             self.train_ctf_url,
             self.test_ctf_url,
             self.query_wl_url,
             self.slots_wl_url,
             self.intent_wl_url,
-            self.sentences_url)
+            self.sentences_url,
+            datetime.datetime.now()
+        )
         m = hashlib.sha256()
         m.update(seed.encode("utf-8"))
         m = m.digest().hex()

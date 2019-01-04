@@ -6,7 +6,7 @@
 # CNTK Language Understanding
 
 This service uses [CNTK Language Understanding](https://cntk.ai/pythondocs/CNTK_202_Language_Understanding.html)
-to process text and perform slot tagging.
+to process text and offer two options: slot tagging and intent classification.
 
 It is part of our [NLP Services](https://github.com/singnet/nlp-services).
 
@@ -16,19 +16,33 @@ The service receives as input multiple files of a dataset. All input files must 
 The train and test dataset must be in CTF format ([link](https://docs.microsoft.com/en-us/cognitive-toolkit/brainscript-cntktextformat-reader#cntk-text-format-ctf)). 
 The query and slots files are used to predict on new sentences.
 Then the service must receive as input the vocabulary size, number of slots labels and number of intent labels.
-With these parameters the service will be able to train its model to perform slot tagging.
+With these parameters the service will be able to train a recurrent LSTM network model to perform slot tagging or intent classification.
 As last parameter, the service receives a file with sentences (one per line).
 This file will be the input of the trained model.
-Finally the service returns 2 URLs, one with file containing the input sentences and slot tagging
-and the second with file of the trained model.
+
+Finally the service returns 2 URLs, one of a file containing the input sentences and model output (slot tagging or intent classification).
+The second URL is the file of trained model.
 
 ### What’s the point?
 
-[[SERVICE_DOCS_WHATS_THE_POINT]]
+The service process text using recurrent LSTM network to tag words or classify the intent of given sentences.
+
+The service outputs 2 URLs, one with model's output and other with the trained model file.
 
 ### How does it work?
 
-[[SERVICE_DOCS_HOW_DOES_IT_WORK]]
+The user must provide the following inputs:
+
+ - `gRPC method`: slot_tagging or intent.
+ - `train_ctf_url`: URL of the training file.
+ - `test_ctf_url`: URL of the test file.
+ - `query_wl_url`: URL of the query file.
+ - `slots_wl_url`: URL of the slots file (if `gRPC method` is "slot_tagging").
+ - `intent_wl_url`: URL of the intent file (if `gRPC method` is "intent").
+ - `vocab_size`: the size of vocabulary.
+ - `num_labels`: number of slot labels (if `gRPC method` is "slot_tagging").
+ - `num_intents`: number of intent labels (if `gRPC method` is "intent").
+ - `sentences_url`: URL of the sentences file to be the input of the trained model.
 
 You can use this service from [SingularityNET DApp](http://beta.singularitynet.io/).
 
@@ -58,10 +72,8 @@ Input:
  - `test_ctf_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.test.ctf?raw=true".
  - `query_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/query.wl?raw=true".
  - `slots_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/slots.wl?raw=true".
- - `intent_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/intent.wl?raw=true".
  - `vocab_size`: 943.
  - `num_labels`: 129.
- - `num_intents`: 26.
  - `sentences_url`: "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Example/sentences.txt".
 
 Response:
@@ -101,10 +113,8 @@ Input:
  - `train_ctf_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.train.ctf?raw=true".
  - `test_ctf_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.test.ctf?raw=true".
  - `query_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/query.wl?raw=true".
- - `slots_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/slots.wl?raw=true".
  - `intent_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/intent.wl?raw=true".
  - `vocab_size`: 943.
- - `num_labels`: 129.
  - `num_intents`: 26.
  - `sentences_url`: "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Example/sentences.txt".
 

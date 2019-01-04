@@ -6,7 +6,7 @@
 # CNTK Language Understanding
 
 This service uses [CNTK Language Understanding](https://cntk.ai/pythondocs/CNTK_202_Language_Understanding.html)
-to process text and offer two options: slot tagging or intent classification.
+to process text and offer two options: slot tagging and intent classification.
 
 It is part of our [NLP Services](https://github.com/singnet/nlp-services).
 
@@ -127,7 +127,7 @@ The second is the trained model itself.
 
 For further instructions about the output of this service, check the [User's Guide](../../docs/users_guide/nlp-services/cntk-language-understanding.md).
 
-Through SingularityNET (follow this [link](https://github.com/singnet/wiki/blob/master/tutorials/howToPublishService/README.md) 
+Through SingularityNET (follow this [link](https://dev.singularitynet.io/tutorials/publish/) 
 to learn how to publish a service and open a payment channel to be able to call it):
 
 Assuming that you have an open channel (`id: 0`) to this service:
