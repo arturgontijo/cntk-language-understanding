@@ -45,14 +45,17 @@ class LanguageUnderstanding:
 
     @staticmethod
     def download(url, filename=None, save=True):
-        """ utility function to download a file """
-        response = requests.get(url, stream=True)
-        if save:
-            with open(filename, "wb") as handle:
-                for data in response.iter_content():
-                    handle.write(data)
+        if "http://" in url or "https://" in url:
+            header = {'User-Agent': 'Mozilla/5.0 (Windows NT x.y; Win64; x64; rv:9.0) Gecko/20100101 Firefox/10.0'}
+            r = requests.get(url, headers=header, allow_redirects=True)
+            if save:
+                with open(filename, "wb") as handle:
+                    for data in r.iter_content():
+                        handle.write(data)
+            else:
+                return r.text
         else:
-            return response.text
+            log.debug("Not a valid URL: {}".format(url))
 
     @staticmethod
     def delete_old_files(folder):
@@ -238,9 +241,8 @@ class LanguageUnderstanding:
 
         for data_set, data_source in user_data.items():
             if not os.path.exists(data_source[0]):
-                if data_source[1] != "":
-                    log.info("{}: Downloading...".format(data_source[1]))
-                    self.download(data_source[1], data_source[0])
+                log.info("{}: Downloading...".format(data_source[1]))
+                self.download(data_source[1], data_source[0])
             else:
                 log.info("{}: Reusing...".format(data_source[0]))
 
