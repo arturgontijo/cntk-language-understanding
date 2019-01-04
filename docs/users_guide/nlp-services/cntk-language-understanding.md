@@ -37,10 +37,10 @@ The user must provide the following inputs:
  - `train_ctf_url`: URL of the training file.
  - `test_ctf_url`: URL of the test file.
  - `query_wl_url`: URL of the query file.
- - `slots_wl_url`: URL of the slots file (if `gRPC method` is "slot_tagging").
+ - `slots_wl_url`: URL of the slots file.
  - `intent_wl_url`: URL of the intent file (if `gRPC method` is "intent").
  - `vocab_size`: the size of vocabulary.
- - `num_labels`: number of slot labels (if `gRPC method` is "slot_tagging").
+ - `num_labels`: number of slot labels.
  - `num_intents`: number of intent labels (if `gRPC method` is "intent").
  - `sentences_url`: URL of the sentences file to be the input of the trained model.
 
@@ -113,8 +113,10 @@ Input:
  - `train_ctf_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.train.ctf?raw=true".
  - `test_ctf_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Tutorials/SLUHandsOn/atis.test.ctf?raw=true".
  - `query_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/query.wl?raw=true".
+ - `slots_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/slots.wl?raw=true".
  - `intent_wl_url`: "https://github.com/Microsoft/CNTK/blob/release/2.6/Examples/LanguageUnderstanding/ATIS/BrainScript/intent.wl?raw=true".
  - `vocab_size`: 943.
+ - `num_labels`: 129.
  - `num_intents`: 26.
  - `sentences_url`: "http://54.203.198.53:7000/LanguageUnderstanding/CNTK/Example/sentences.txt".
 

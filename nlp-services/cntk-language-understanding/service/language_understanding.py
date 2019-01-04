@@ -219,7 +219,7 @@ class LanguageUnderstanding:
             self.slots_wl_url,
             self.intent_wl_url,
             self.sentences_url,
-            datetime.datetime.now()
+            intent_model
         )
         m = hashlib.sha256()
         m.update(seed.encode("utf-8"))
