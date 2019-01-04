@@ -83,9 +83,9 @@ if __name__ == "__main__":
                 query_wl_url=query_wl_url,
                 slots_wl_url=slots_wl_url,
                 intent_wl_url=intent_wl_url,
-                vocab_size=vocab_size,
-                num_labels=num_labels,
-                num_intents=num_intents,
+                vocab_size=int(vocab_size),
+                num_labels=int(num_labels),
+                num_intents=int(num_intents),
                 sentences_url=sentences_url
             )
 
