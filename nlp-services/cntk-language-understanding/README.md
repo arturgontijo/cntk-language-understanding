@@ -29,7 +29,7 @@ $ cd nlp-services/cntk-language-understanding
 ### Running the service:
 
 To get the `ORGANIZATION_ID` and `SERVICE_ID` you must have already published a service 
-(check this [link](https://github.com/singnet/wiki/tree/master/tutorials/howToPublishService)).
+(check this [link](https://dev.singularitynet.io/tutorials/publish/)).
 
 Create the `SNET Daemon`'s config JSON file (`snetd.config.json`).
 
@@ -166,7 +166,7 @@ The output file content:
 
 ## Contributing and Reporting Issues
 
-Please read our [guidelines](https://github.com/singnet/wiki/blob/master/guidelines/CONTRIBUTING.md#submitting-an-issue) before submitting an issue. 
+Please read our [guidelines](https://dev.singularitynet.io/docs/contribute/contribution-guidelines/#submitting-an-issue) before submitting an issue. 
 If your issue is a bug, please use the bug template pre-populated [here][issue-template]. 
 For feature requests and queries you can use [this template][feature-template].
 
